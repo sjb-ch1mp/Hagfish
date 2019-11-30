@@ -3,8 +3,6 @@ package ch1mp.hagfish;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Iterator;
-
 import static org.junit.Assert.*;
 
 import ch1mp.hagfish.utils.Account;
@@ -19,16 +17,7 @@ public class CrypterTest {
     @Before
     public void setUpVault()
     {
-        vault = new Vault();
-        vault.addAccount(new Account("Netflix",
-                "username@domain.com",
-                "password1234"));
-        vault.addAccount(new Account("Stan",
-                "username@domain.com",
-                "password1234"));
-        vault.addAccount(new Account("Disney+",
-                "username@domain.com",
-                "password1234"));
+        vault = TestUtilities.createVault();
     }
 
     @Test
@@ -39,44 +28,40 @@ public class CrypterTest {
         assertNotNull("encryptedVault is null", encryptedVault);
         Vault decryptedVault = crypter.decryptVault(encryptedVault);
         assertNotNull("decryptedVault is null", decryptedVault);
-        assertTrue(testVaultContents(decryptedVault, "StanDisney+Netflix"));
+        assertTrue(TestUtilities.testVaultContents(decryptedVault, "StanDisney+Netflix"));
+
+        //test changing passwords
+        crypter.changePassword("newpassword");
+        decryptedVault = crypter.decryptVault(encryptedVault);
+        assertNull(decryptedVault);
+        crypter.changePassword(PASSWORD);
+        decryptedVault = crypter.decryptVault(encryptedVault);
+        assertNotNull(decryptedVault);
+        assertTrue(TestUtilities.testVaultContents(decryptedVault, "StanDisney+Netflix"));
     }
 
     @Test
     public void testVaultAddAndDelete()
     {
-        assertTrue(testVaultContents(vault, "StanDisney+Netflix"));
+        assertTrue(TestUtilities.testVaultContents(vault, "StanDisney+Netflix"));
         vault.deleteAccount("Stan");
-        assertTrue(testVaultContents(vault, "Disney+Netflix"));
+        assertTrue(TestUtilities.testVaultContents(vault, "Disney+Netflix"));
         vault.deleteAccount("Disney+");
-        assertTrue(testVaultContents(vault, "Netflix"));
+        assertTrue(TestUtilities.testVaultContents(vault, "Netflix"));
         vault.deleteAccount("Netflix");
-        assertTrue(testVaultContents(vault, ""));
+        assertTrue(TestUtilities.testVaultContents(vault, ""));
         vault.addAccount(new Account("Netflix",
                 "username@domain.com",
                 "password1234"));
-        assertTrue(testVaultContents(vault, "Netflix"));
+        assertTrue(TestUtilities.testVaultContents(vault, "Netflix"));
         vault.addAccount(new Account("Stan",
                 "username@domain.com",
                 "password1234"));
-        assertTrue(testVaultContents(vault, "NetflixStan"));
+        assertTrue(TestUtilities.testVaultContents(vault, "NetflixStan"));
         vault.addAccount(new Account("Disney+",
                 "username@domain.com",
                 "password1234"));
-        assertTrue(testVaultContents(vault, "NetflixStanDisney+"));
+        assertTrue(TestUtilities.testVaultContents(vault, "NetflixStanDisney+"));
     }
 
-    private boolean testVaultContents(Vault vault, String expectedContents)
-    {
-        Iterator<Account> iterator = vault.iterator();
-
-        if(!iterator.hasNext()) return expectedContents.equals("");
-
-        while(iterator.hasNext())
-        {
-            if(!expectedContents.contains(iterator.next().getAccountName()))
-                return false;
-        }
-        return true;
-    }
 }

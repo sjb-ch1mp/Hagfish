@@ -53,12 +53,42 @@ public class Memory implements Serializable {
         }
         catch(FileNotFoundException e)
         {
-            Log.d(TAG, MEMORY + " not found. Creating new Memory.");
+            //Log.d(TAG, MEMORY + " not found. Creating new Memory.");
+            System.out.println("File not found. Creating new Memory");
             return new Memory();
         }
         catch(Exception e)
         {
-            Log.d(TAG, e.toString());
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Overloaded getInstance method for testing purposes.
+     *
+     * @param fileName
+     * @return Memory
+     */
+    public static Memory getInstance(String fileName)
+    {
+        try
+        {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fis);
+            return (Memory) objectInputStream.readObject();
+        }
+        catch(FileNotFoundException e)
+        {
+            //Log.d(TAG, MEMORY + " not found. Creating new Memory.");
+            System.out.println("File not found. Creating new Memory");
+            return new Memory();
+        }
+        catch(Exception e)
+        {
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
             return null;
         }
     }
@@ -84,10 +114,37 @@ public class Memory implements Serializable {
         }
         catch(Exception e)
         {
-            Log.d(TAG, e.toString());
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
             return false;
         }
     }
+
+    /**
+     * Overloaded save method for testing
+     * @param fileName
+     * @param vault
+     * @param crypter
+     * @return boolean
+     */
+    public boolean saveMemory(String fileName, Vault vault, Crypter crypter)
+    {
+        try
+        {
+            encryptedVault = crypter.encryptVault(vault);
+            FileOutputStream fos = new FileOutputStream(fileName);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+            return true;
+        }
+        catch(Exception e)
+        {
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /**
      * Takes a password from the user and attempts to decrypt the encrypted Vault.
@@ -102,7 +159,10 @@ public class Memory implements Serializable {
      */
     public Vault getVault(Crypter crypter)
     {
+        if(encryptedVault == null) return null;
+
         currentAttempts++;
+
         if(currentAttempts > maxAttempts)
         {
             encryptedVault = null;
