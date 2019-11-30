@@ -4,8 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#00000000"
+    android:foreground="@android:color/background_dark"
+    tools:context=".MainActivity" >
 
-
-
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:foreground="@android:color/background_light"
+        android:hint="enter your password"
+        android:inputType="textPassword"
+        android:textColor="#00FFFFFF"
+        android:textColorHint="#00D1D1D1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.309" />
 </androidx.constraintlayout.widget.ConstraintLayout>
