@@ -18,6 +18,7 @@ import java.io.Serializable;
  */
 public class Memory implements Serializable {
 
+    private static final long serialVersionUID = 42L;
     private static final String TAG = "Memory";
     private static final String MEMORY = "mem.dat";
     private int maxAttempts;
