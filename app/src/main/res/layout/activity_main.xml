@@ -4,24 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000"
-    android:foreground="@android:color/background_dark"
+    android:background="@android:color/background_dark"
     tools:context=".MainActivity" >
 
     <EditText
-        android:id="@+id/txtPassword"
+        android:id="@+id/textPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:foreground="@android:color/background_light"
-        android:hint="enter your password"
-        android:inputType="textPassword"
-        android:textColor="#00FFFFFF"
-        android:textColorHint="#00D1D1D1"
+        android:textAlignment="center"
+        android:inputType="text|textPassword"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorPasswordText"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.309" />
+        app:layout_constraintVertical_bias="0.197" />
+
+    <TextView
+        android:id="@+id/labelPassword"
+        android:layout_width="211dp"
+        android:layout_height="28dp"
+        android:text="@string/password_hint"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorPasswordText"
+        android:textIsSelectable="true"
+        android:textSize="12sp"
+        android:typeface="monospace"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPassword"
+        app:layout_constraintVertical_bias="0.024" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="113dp"
+        android:layout_height="156dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelPassword"
+        app:srcCompat="@drawable/footer" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

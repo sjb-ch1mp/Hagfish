@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Hagfish</string>
+    <string name="password_hint">ENTER YOUR PASSWORD</string>
 </resources>
