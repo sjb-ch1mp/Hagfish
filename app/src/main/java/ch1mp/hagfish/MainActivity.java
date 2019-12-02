@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.textPassword);
         labelPassword = findViewById(R.id.labelPassword);
 
-        memory = Memory.getInstance(this.getApplicationContext());
+        memory = Memory.getInstance(MainActivity.this);
         if(memory.isNew())
         {//run set up
             labelPassword.setText(Prompt.SET_UP.getMessage());
@@ -93,9 +93,10 @@ public class MainActivity extends AppCompatActivity {
     {
         vault = new Vault();
         crypter = new Crypter(password);
-        Intent intent = new Intent();
-
-
+        Intent intent = new Intent(MainActivity.this, AccountViewActivity.class);
+        //intent.putExtra("Vault", vault);
+        //intent.putExtra("Crypter", crypter);
+        startActivity(intent);
     }
 
 

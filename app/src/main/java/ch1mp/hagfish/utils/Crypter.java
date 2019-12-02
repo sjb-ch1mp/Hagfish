@@ -16,6 +16,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Crypter {
 
+    //FIXME: Implement Parcelable so that this can be passed from MainActivity to AccountViewActivity
+
     private static final String TAG = "Crypter";
     private SecretKey key;
     private IvParameterSpec iv;
