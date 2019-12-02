@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Hagfish</string>
     <string name="password_hint">ENTER YOUR PASSWORD</string>
+    <string name="title_activity_account_viewer">AccountViewerActivity</string>
 </resources>
