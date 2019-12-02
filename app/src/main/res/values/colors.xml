@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="colorPasswordText">#FFFFFF</color>
+    <color name="colorLogo">#FF9966</color>
 </resources>

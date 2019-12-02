@@ -185,4 +185,5 @@ public class Memory implements Serializable {
     public int getMaxAttempts(){ return maxAttempts; }
     public int getCurrentAttempts(){ return currentAttempts; }
     public int getRemainingAttempts(){ return maxAttempts - currentAttempts; }
+    public boolean isNew(){ return encryptedVault == null; }
 }
