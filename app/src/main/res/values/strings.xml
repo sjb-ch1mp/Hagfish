@@ -4,4 +4,14 @@
     <string name="title_activity_account_viewer">AccountViewerActivity</string>
     <string name="button_user">USER NAME</string>
     <string name="button_pw">PASSWORD</string>
+    <string name="no_accounts">Add an account</string>
+    <string name="toolbar_new_account">New Account</string>
+    <string name="toolbar_login_attempts">Log-in Attempts Allowed</string>
+    <string name="toolbar_change_password">Change Hagfish Password</string>
+    <string name="toolbar_destroy_vault">Delete Accounts</string>
+    <string name="toolbar_about_hagfish">About Hagfish</string>
+    <string name="account_change_pw">Change Password</string>
+    <string name="account_change_un">Change User Name</string>
+    <string name="account_gen_new">Generate New</string>
+    <string name="account_delete">Delete Account</string>
 </resources>

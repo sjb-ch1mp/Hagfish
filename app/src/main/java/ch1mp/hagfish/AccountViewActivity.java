@@ -1,13 +1,16 @@
 package ch1mp.hagfish;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -26,17 +29,15 @@ public class AccountViewActivity extends AppCompatActivity {
     Vault vault;
     Crypter crypter;
     Account activeAccount;
-
-    Button buttonUserName;
-    Button buttonPassword;
+    Toolbar mainToolbar;
     TextView textAccountName;
+    PopupMenu accountMenu;
     TextView textUserName;
     TextView textPassword;
     TextView textModified;
     View selectedAccount;
-    PopupMenu popupUserName;
-    PopupMenu popupPassword;
     RecyclerView accountList;
+    Toast debugToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,47 +46,120 @@ public class AccountViewActivity extends AppCompatActivity {
 
         //vault = getIntent().getParcelableExtra("Vault");
         //crypter = getIntent().getParcelableExtra("Crypter");
+        mainToolbar = findViewById(R.id.toolbarAccountView);
+        setSupportActionBar(mainToolbar);
 
-        accountList = findViewById(R.id.accountList);
         textAccountName = findViewById(R.id.textAccountName);
+        accountMenu = new PopupMenu(AccountViewActivity.this, textAccountName);
+        MenuInflater inflater = accountMenu.getMenuInflater();
+        inflater.inflate(R.menu.account_menu, accountMenu.getMenu());
+        accountMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch(menuItem.getItemId())
+                {
+                    case R.id.account_un_change:
+                        changeUserName();
+                        return true;
+                    case R.id.account_pw_change:
+                        changeAccountPassword();
+                        return true;
+                    case R.id.account_pw_generate:
+                        generateNewAccountPassword();
+                        return true;
+                    case R.id.account_delete:
+                        deleteAccount();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
         textUserName = findViewById(R.id.textUserName);
         textPassword = findViewById(R.id.textPassword);
         textModified = findViewById(R.id.textModified);
 
+        accountList = findViewById(R.id.accountList);
         setUpButtonsAndPopups();
         setUpRecyclableView();
+
+        debugToast = new Toast(AccountViewActivity.this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflator = getMenuInflater();
+        inflator.inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.menu_item_new_account:
+                addNewAccount();
+                return true;
+            case R.id.menu_item_login:
+                changeLogInAttempts();
+                return true;
+            case R.id.menu_item_change_hagfish_pw:
+                changeHagfishPassword();
+                return true;
+            case R.id.menu_item_delete_vault:
+                destroyVault();
+                return true;
+            case R.id.menu_item_about:
+                aboutHagfish();
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void setUpButtonsAndPopups() {
-        buttonUserName = findViewById(R.id.buttonUserName);
-        popupUserName = new PopupMenu(AccountViewActivity.this, buttonUserName);
-        buttonUserName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupUserName.show();
-            }
-        });
-        popupUserName.getMenu().add("Change");
-        popupUserName.getMenu().add("Copy");
-        //FIXME: Set up OnMenuItemClickListeners for all popupUserName menu items
 
-        buttonPassword = findViewById(R.id.buttonPassword);
-        popupPassword = new PopupMenu(AccountViewActivity.this, buttonPassword);
-        buttonPassword.setOnClickListener(new View.OnClickListener() {
+        textUserName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-                popupPassword.show();
+            public boolean onLongClick(View view) {
+                copyToClipBoard((TextView) view);
+                return true;
             }
         });
-        popupPassword.getMenu().add("Show");
-        popupPassword.getMenu().add("Change");
-        popupPassword.getMenu().add("Generate New");
-        popupPassword.getMenu().add("Copy");
-        //FIXME: Set up OnMenuItemClickListeners for all popupPassword menu items.
+
+        textPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPassword();
+            }
+        });
+
+        textPassword.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                copyToClipBoard((TextView) view);
+                return true;
+            }
+        });
+
+        textAccountName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!textAccountName.getText().toString().equals(getString(R.string.no_accounts)))
+                {
+                    accountMenu.show();
+                }
+            }
+        });
 
     }
 
     private void setUpRecyclableView() {
+
+        //FIXME: need to figure this one out - use an adaptor?
 
         ArrayList<View> focusables = new ArrayList<>(0);
 
@@ -100,7 +174,7 @@ public class AccountViewActivity extends AppCompatActivity {
                 selectedAccount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(buttonPassword.getVisibility() == View.INVISIBLE)
+                        if(textUserName.getVisibility() == View.INVISIBLE)
                         {
                             toggleAccountDetailsVisibility(false);
                         }
@@ -133,8 +207,8 @@ public class AccountViewActivity extends AppCompatActivity {
         else
         {
             //there are no accounts yet
-            textAccountName.setText("Add an account.");
-            toggleAccountDetailsVisibility(buttonPassword.getVisibility() == View.VISIBLE);
+            textAccountName.setText(R.string.no_accounts);
+            toggleAccountDetailsVisibility(textUserName.getVisibility() == View.VISIBLE);
         }
     }
 
@@ -142,16 +216,12 @@ public class AccountViewActivity extends AppCompatActivity {
     {
         if(!currentlyVisible)
         {
-            buttonPassword.setVisibility(View.VISIBLE);
-            buttonUserName.setVisibility(View.VISIBLE);
             textUserName.setVisibility(View.VISIBLE);
             textPassword.setVisibility(View.VISIBLE);
             textModified.setVisibility(View.VISIBLE);
         }
         else
         {
-            buttonPassword.setVisibility(View.INVISIBLE);
-            buttonUserName.setVisibility(View.INVISIBLE);
             textUserName.setVisibility(View.INVISIBLE);
             textPassword.setVisibility(View.INVISIBLE);
             textModified.setVisibility(View.INVISIBLE);
@@ -179,11 +249,71 @@ public class AccountViewActivity extends AppCompatActivity {
     private void showPassword()
     {
         //FIXME: temporarily show the password
-
+        showSelectedOption("Showing password");
     }
 
-    private void copyToClipBoard(Button buttonPressed)
+    private void copyToClipBoard(TextView viewPressed)
     {
         //FIXME: copy the user name or password to the clipboard
+        showSelectedOption("Copying to clipboard");
+    }
+
+    private void changeUserName()
+    {
+        //FIXME: change the user name
+        showSelectedOption("Changing user name");
+    }
+
+    private void changeAccountPassword()
+    {
+        //FIXME: change the password for the account
+        showSelectedOption("Changing account password");
+    }
+
+    private void generateNewAccountPassword()
+    {
+        //FIXME: generate a new password for the account
+        showSelectedOption("Generating new password");
+    }
+
+    private void deleteAccount()
+    {
+        //FIXME: delete the account
+        showSelectedOption("Deleting account");
+    }
+
+    private void addNewAccount()
+    {
+        //FIXME: add a new account
+        showSelectedOption("Adding new account");
+    }
+
+    private void changeLogInAttempts()
+    {
+        //FIXME: change log-in attempts
+        showSelectedOption("Changing Log in attempts allowed");
+    }
+
+    private void changeHagfishPassword()
+    {
+        //FIXME: change the Hagfish password
+        showSelectedOption("Changing Hagfish password");
+    }
+
+    private void destroyVault()
+    {
+        //FIXME: destroy the current vault
+        showSelectedOption("Destroying vault");
+    }
+
+    private void aboutHagfish()
+    {
+        //FIXME: show the user 'About' spheel
+        showSelectedOption("Showing About");
+    }
+
+    private void showSelectedOption(String debugText)
+    {
+        Toast.makeText(AccountViewActivity.this, debugText, Toast.LENGTH_SHORT).show();
     }
 }

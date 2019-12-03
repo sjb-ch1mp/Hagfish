@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_item_new_account"
+        android:title="@string/toolbar_new_account"
+        />
+    <item
+        android:id="@+id/menu_item_login"
+        android:title="@string/toolbar_login_attempts"
+        />
+    <item
+        android:id="@+id/menu_item_change_hagfish_pw"
+        android:title="@string/toolbar_change_password"
+        />
+    <item
+        android:id="@+id/menu_item_delete_vault"
+        android:title="@string/toolbar_destroy_vault"
+        />
+    <item
+        android:id="@+id/menu_item_about"
+        android:title="@string/toolbar_about_hagfish"
+        />
+</menu>
