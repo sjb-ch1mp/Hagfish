@@ -1,11 +1,15 @@
 package ch1mp.hagfish;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,11 +17,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 import ch1mp.hagfish.utils.Account;
+import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.Memory;
 import ch1mp.hagfish.utils.UserPreferences;
@@ -38,25 +42,53 @@ public class AccountViewActivity extends AppCompatActivity {
     TextView textPassword;
     TextView textModified;
     View selectedAccount;
-    RecyclerView accountList;
-    Toast debugToast;
     UserPreferences userPreferences;
+
+    RecyclerView accountList;
+    RecyclerView.Adapter adapter;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_view);
+        setUpMainToolbar();
+        setUpStores();
+        setUpLabels();
+        setUpAccountMenu();
+        setUpPressListeners();
+        setUpRecyclableView();
+    }
+
+    /*============
+    * INIT METHODS
+    * ============*/
+    private void setUpMainToolbar()
+    {
         mainToolbar = findViewById(R.id.toolbarAccountView);
         setSupportActionBar(mainToolbar);
+    }
 
+    private void setUpStores()
+    {
         vault = Vault.retrieveVault(getIntent());
         crypter = new Crypter(
                 getIntent().getByteArrayExtra("password"),
                 getIntent().getByteArrayExtra("seed")
         );
         userPreferences = (UserPreferences) getIntent().getSerializableExtra("userprefs");
+    }
 
+    private void setUpLabels()
+    {
         textAccountName = findViewById(R.id.textAccountName);
+        textUserName = findViewById(R.id.textUserName);
+        textPassword = findViewById(R.id.textPassword);
+        textModified = findViewById(R.id.textModified);
+    }
+
+    private void setUpAccountMenu()
+    {
         accountMenu = new PopupMenu(AccountViewActivity.this, textAccountName);
         MenuInflater inflater = accountMenu.getMenuInflater();
         inflater.inflate(R.menu.account_menu, accountMenu.getMenu());
@@ -82,74 +114,9 @@ public class AccountViewActivity extends AppCompatActivity {
                 }
             }
         });
-
-        textUserName = findViewById(R.id.textUserName);
-        textPassword = findViewById(R.id.textPassword);
-        textModified = findViewById(R.id.textModified);
-
-        accountList = findViewById(R.id.accountList);
-        setUpButtonsAndPopups();
-        setUpRecyclableView();
-
-        debugToast = new Toast(AccountViewActivity.this);
     }
 
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
-        builder.setMessage(R.string.log_out_prompt);
-        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
-                vault = null;
-                crypter = null;
-                AccountViewActivity.super.onBackPressed();
-            }
-        });
-        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //do nothing
-            }
-        });
-        builder.create();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        MenuInflater inflator = getMenuInflater();
-        inflator.inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch(item.getItemId())
-        {
-            case R.id.menu_item_new_account:
-                addNewAccount();
-                return true;
-            case R.id.menu_item_login:
-                changeLogInAttempts();
-                return true;
-            case R.id.menu_item_change_hagfish_pw:
-                changeHagfishPassword();
-                return true;
-            case R.id.menu_item_delete_vault:
-                destroyVault();
-                return true;
-            case R.id.menu_item_about:
-                aboutHagfish();
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private void setUpButtonsAndPopups() {
+    private void setUpPressListeners() {
 
         textUserName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -187,13 +154,16 @@ public class AccountViewActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclableView() {
-
-        //FIXME: need to figure this one out - use an adaptor?
-
-
-
+        accountList = findViewById(R.id.accountList);
+        layoutManager = new LinearLayoutManager(AccountViewActivity.this);
+        accountList.setLayoutManager(layoutManager);
+        adapter = new AccountAdapter(vault);
+        accountList.setAdapter(adapter);
     }
 
+    /*============
+    * UTIL METHODS
+    * ============*/
     private void toggleAccountDetailsVisibility(boolean currentlyVisible)
     {
         if(!currentlyVisible)
@@ -228,6 +198,9 @@ public class AccountViewActivity extends AppCompatActivity {
         return hiddenPassword;
     }
 
+    /*============
+    * USER ACTIONS
+    * ============*/
     private void showPassword()
     {
         //FIXME: temporarily show the password
@@ -266,8 +239,23 @@ public class AccountViewActivity extends AppCompatActivity {
 
     private void addNewAccount()
     {
-        //FIXME: add a new account
-        showSelectedOption("Adding new account");
+        //FIXME: Need to figure out how to pass info from dialog back to activity
+        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.new_account, null));
+        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //do nothing
+            }
+        });
+        builder.show();
     }
 
     private void changeLogInAttempts()
@@ -299,4 +287,67 @@ public class AccountViewActivity extends AppCompatActivity {
         Toast.makeText(AccountViewActivity.this, debugText, Toast.LENGTH_SHORT).show();
     }
 
+    /*================
+    * ACTIVITY METHODS
+    * ================*/
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
+        builder.setMessage(R.string.log_out_prompt);
+        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //FIXME: Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
+                vault = null;
+                crypter = null;
+                AccountViewActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //do nothing
+            }
+        });
+        builder.create();
+    }
+
+    @Override
+    protected void onStop() {
+        //FIXME: Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
+        super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflator = getMenuInflater();
+        inflator.inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.menu_item_new_account:
+                addNewAccount();
+                return true;
+            case R.id.menu_item_login:
+                changeLogInAttempts();
+                return true;
+            case R.id.menu_item_change_hagfish_pw:
+                changeHagfishPassword();
+                return true;
+            case R.id.menu_item_delete_vault:
+                destroyVault();
+                return true;
+            case R.id.menu_item_about:
+                aboutHagfish();
+                return true;
+            default:
+                return false;
+        }
+    }
 }

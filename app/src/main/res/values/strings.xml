@@ -17,4 +17,8 @@
     <string name="log_out_prompt">If you continue, you will be logged out.</string>
     <string name="log_out_continue">Continue</string>
     <string name="log_out_cancel">Cancel</string>
+    <string name="enter_user_name">User Name</string>
+    <string name="enter_password">Password</string>
+    <string name="enter_account_name">Account</string>
+    <string name="password_information">To generate a random password, leave the password field empty and press Continue.</string>
 </resources>

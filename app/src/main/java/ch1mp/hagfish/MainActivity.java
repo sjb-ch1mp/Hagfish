@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.File;
+
 import ch1mp.hagfish.exceptions.PasswordException;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.Memory;
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //MainActivity.this.deleteFile("mem.dat");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         txtPassword = findViewById(R.id.textPassword);

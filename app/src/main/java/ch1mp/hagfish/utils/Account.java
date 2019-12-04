@@ -1,5 +1,7 @@
 package ch1mp.hagfish.utils;
 
+import android.widget.TextView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

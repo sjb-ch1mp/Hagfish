@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#FFFFFF</color>
+    <color name="colorAccent">#FF9966</color>
     <color name="colorPasswordText">#FFFFFF</color>
     <color name="colorLogo">#FF9966</color>
 </resources>
