@@ -3,6 +3,7 @@ package ch1mp.hagfish.utils;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,12 +19,12 @@ import java.io.Serializable;
  */
 public class Memory implements Serializable {
 
-    private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = 1986L;
     private static final String TAG = "Memory";
     private static final String MEMORY = "mem.dat";
-    private int maxAttempts;
     private byte[] encryptedVault;
     private int currentAttempts;
+    private UserPreferences userPreferences;
 
     /**
      * Private constructor. Only called if there is no currently saved Memory.
@@ -31,9 +32,16 @@ public class Memory implements Serializable {
      */
     private Memory()
     {
-        maxAttempts = 5;
         currentAttempts = 0;
         encryptedVault = null;
+        userPreferences = new UserPreferences();
+    }
+
+    private Memory(UserPreferences userPreferences)
+    {
+        currentAttempts = 0;
+        encryptedVault = null;
+        this.userPreferences = userPreferences;
     }
 
     /**
@@ -102,14 +110,16 @@ public class Memory implements Serializable {
      * @param crypter - the Crypter holding the user's password
      * @return boolean - true if successful
      */
-    public boolean saveMemory(Context context, Vault vault, Crypter crypter)
+    public static boolean saveMemory(Context context, Vault vault, Crypter crypter, UserPreferences userPreferences)
     {
+        Memory memory = new Memory(userPreferences);
+
         try
         {
-            encryptedVault = crypter.encryptVault(vault);
+            memory.encryptedVault = crypter.encryptVault(vault);
             FileOutputStream fos = context.openFileOutput(MEMORY, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
+            oos.writeObject(memory);
             return true;
         }
         catch(Exception e)
@@ -163,7 +173,7 @@ public class Memory implements Serializable {
 
         currentAttempts++;
 
-        if(currentAttempts > maxAttempts)
+        if(currentAttempts > userPreferences.getMaxAttempts())
         {
             encryptedVault = null;
             return null;
@@ -181,9 +191,8 @@ public class Memory implements Serializable {
     }
 
     //Getters and setters
-    public void setMaxAttempts(int maxAttempts){ this.maxAttempts = maxAttempts; }
-    public int getMaxAttempts(){ return maxAttempts; }
     public int getCurrentAttempts(){ return currentAttempts; }
-    public int getRemainingAttempts(){ return maxAttempts - currentAttempts; }
+    public int getRemainingAttempts(){ return userPreferences.getMaxAttempts() - currentAttempts; }
+    public UserPreferences getUserPreferences(){ return userPreferences; }
     public boolean isNew(){ return encryptedVault == null; }
 }

@@ -1,5 +1,6 @@
 package ch1mp.hagfish;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,16 +10,17 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import ch1mp.hagfish.exceptions.AccountException;
 import ch1mp.hagfish.utils.Account;
 import ch1mp.hagfish.utils.Crypter;
+import ch1mp.hagfish.utils.Memory;
+import ch1mp.hagfish.utils.UserPreferences;
 import ch1mp.hagfish.utils.Vault;
 
 public class AccountViewActivity extends AppCompatActivity {
@@ -38,16 +40,21 @@ public class AccountViewActivity extends AppCompatActivity {
     View selectedAccount;
     RecyclerView accountList;
     Toast debugToast;
+    UserPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_view);
-
-        //vault = getIntent().getParcelableExtra("Vault");
-        //crypter = getIntent().getParcelableExtra("Crypter");
         mainToolbar = findViewById(R.id.toolbarAccountView);
         setSupportActionBar(mainToolbar);
+
+        vault = Vault.retrieveVault(getIntent());
+        crypter = new Crypter(
+                getIntent().getByteArrayExtra("password"),
+                getIntent().getByteArrayExtra("seed")
+        );
+        userPreferences = (UserPreferences) getIntent().getSerializableExtra("userprefs");
 
         textAccountName = findViewById(R.id.textAccountName);
         accountMenu = new PopupMenu(AccountViewActivity.this, textAccountName);
@@ -85,6 +92,28 @@ public class AccountViewActivity extends AppCompatActivity {
         setUpRecyclableView();
 
         debugToast = new Toast(AccountViewActivity.this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
+        builder.setMessage(R.string.log_out_prompt);
+        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
+                vault = null;
+                crypter = null;
+                AccountViewActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //do nothing
+            }
+        });
+        builder.create();
     }
 
     @Override
@@ -161,55 +190,8 @@ public class AccountViewActivity extends AppCompatActivity {
 
         //FIXME: need to figure this one out - use an adaptor?
 
-        ArrayList<View> focusables = new ArrayList<>(0);
 
-        if(vault != null)
-        {
-            Iterator<Account> iterator = vault.iterator();
 
-            while (iterator.hasNext()) {
-                Account account = iterator.next();
-                selectedAccount = new TextView(AccountViewActivity.this);
-                ((TextView) selectedAccount).setText(account.getAccountName());
-                selectedAccount.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(textUserName.getVisibility() == View.INVISIBLE)
-                        {
-                            toggleAccountDetailsVisibility(false);
-                        }
-
-                        selectedAccount = view;
-                        try
-                        {
-                            activeAccount = vault.getAccount(((TextView) selectedAccount).getText().toString());
-                            showAccountDetails();
-                        }
-                        catch(AccountException e)
-                        {
-                            System.out.println(e);
-                        }
-                    }
-                });
-            }
-            selectedAccount = null;
-        }
-
-        if (focusables.size() > 0) {
-            accountList.addFocusables(focusables, View.FOCUS_UP);
-            try {
-                activeAccount = vault.getAccount(((TextView) focusables.get(0)).getText().toString());
-                showAccountDetails();
-            } catch (AccountException e) {
-                System.out.println(e);
-            }
-        }
-        else
-        {
-            //there are no accounts yet
-            textAccountName.setText(R.string.no_accounts);
-            toggleAccountDetailsVisibility(textUserName.getVisibility() == View.VISIBLE);
-        }
     }
 
     private void toggleAccountDetailsVisibility(boolean currentlyVisible)
@@ -316,4 +298,5 @@ public class AccountViewActivity extends AppCompatActivity {
     {
         Toast.makeText(AccountViewActivity.this, debugText, Toast.LENGTH_SHORT).show();
     }
+
 }

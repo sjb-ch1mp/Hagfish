@@ -21,11 +21,21 @@ public class Crypter {
     private static final String TAG = "Crypter";
     private SecretKey key;
     private IvParameterSpec iv;
+    private byte[] hash;
+    private byte[] seed;
 
     public Crypter(String password)
     {
         key = generateKey(password);
         iv = generateIV();
+    }
+
+    public Crypter(byte[] password, byte[] seed)
+    {
+        key = new SecretKeySpec(password, "AES");
+        iv = new IvParameterSpec(seed);
+        seed = null;
+        hash = null;
     }
 
     public Vault decryptVault(byte[] encryptedVault)
@@ -80,6 +90,7 @@ public class Crypter {
             {
                 iv[i] = (byte) rand.nextInt();
             }
+            seed = iv;
             return new IvParameterSpec(iv);
         }
         catch(Exception e)
@@ -95,6 +106,7 @@ public class Crypter {
         {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password.getBytes("UTF-8"));
+            hash = md.digest();
             return new SecretKeySpec(md.digest(), "AES");
         }
         catch(Exception e)
@@ -103,4 +115,7 @@ public class Crypter {
             return null;
         }
     }
+
+    public byte[] getHash(){ return hash; }
+    public byte[] getSeed(){ return seed; }
 }

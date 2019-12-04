@@ -14,4 +14,7 @@
     <string name="account_change_un">Change User Name</string>
     <string name="account_gen_new">Generate New</string>
     <string name="account_delete">Delete Account</string>
+    <string name="log_out_prompt">If you continue, you will be logged out.</string>
+    <string name="log_out_continue">Continue</string>
+    <string name="log_out_cancel">Cancel</string>
 </resources>

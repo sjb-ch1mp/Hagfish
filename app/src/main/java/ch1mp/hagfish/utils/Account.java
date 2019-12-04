@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class Account implements Serializable {
 
-    private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = 1986L;
     private String accountName;
     private String userName;
     private String password;

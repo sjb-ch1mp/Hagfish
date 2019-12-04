@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     password = txtPassword.getText().toString();
                     if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER)
                     {
+                        txtPassword.setText("");
                         crypter = new Crypter(password);
                         vault = memory.getVault(new Crypter(password));
                         if(vault != null)
@@ -93,12 +94,17 @@ public class MainActivity extends AppCompatActivity {
     {
         vault = new Vault();
         crypter = new Crypter(password);
-        Intent intent = new Intent(MainActivity.this, AccountViewActivity.class);
-        //intent.putExtra("Vault", vault);
-        //intent.putExtra("Crypter", crypter);
-        startActivity(intent);
+        openAccountViewer();
     }
 
-
-
+    private void openAccountViewer()
+    {
+        Intent intent = new Intent(MainActivity.this, AccountViewActivity.class);
+        intent.putExtra("vault", vault);
+        intent.putExtra("password", crypter.getHash());
+        intent.putExtra("seed", crypter.getSeed());
+        intent.putExtra("userprefs", memory.getUserPreferences());
+        memory = null;
+        startActivity(intent);
+    }
 }
