@@ -29,7 +29,6 @@
         android:layout_width="211dp"
         android:layout_height="28dp"
         android:focusable="false"
-        android:text="@string/password_hint"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"

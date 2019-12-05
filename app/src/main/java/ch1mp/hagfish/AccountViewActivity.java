@@ -1,15 +1,15 @@
 package ch1mp.hagfish;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,17 +17,22 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.DialogFragment;
 
+import ch1mp.hagfish.dialogs.GeneralDialogListener;
+import ch1mp.hagfish.dialogs.NewAccountDialog;
 import ch1mp.hagfish.utils.Account;
 import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
+import ch1mp.hagfish.utils.Generator;
 import ch1mp.hagfish.utils.Memory;
+import ch1mp.hagfish.utils.UserAction;
 import ch1mp.hagfish.utils.UserPreferences;
 import ch1mp.hagfish.utils.Vault;
 
-public class AccountViewActivity extends AppCompatActivity {
+public class AccountViewActivity
+        extends AppCompatActivity
+        implements NewAccountDialog.DialogListener, GeneralDialogListener {
 
     //FIXME: When the application loses focus for a given time (e.g. 2 minutes) - close it
     //FIXME: When the application closes - save the Memory and burn the vault and crypter
@@ -44,9 +49,8 @@ public class AccountViewActivity extends AppCompatActivity {
     View selectedAccount;
     UserPreferences userPreferences;
 
-    RecyclerView accountList;
-    RecyclerView.Adapter adapter;
-    RecyclerView.LayoutManager layoutManager;
+    ListView accountList;
+    ArrayAdapter<Account> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class AccountViewActivity extends AppCompatActivity {
         setUpLabels();
         setUpAccountMenu();
         setUpPressListeners();
-        setUpRecyclableView();
+        setUpListView();
     }
 
     /*============
@@ -144,7 +148,7 @@ public class AccountViewActivity extends AppCompatActivity {
         textAccountName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!textAccountName.getText().toString().equals(getString(R.string.no_accounts)))
+                if(!textAccountName.getText().toString().equals(getString(R.string.ava_first_time)))
                 {
                     accountMenu.show();
                 }
@@ -153,12 +157,18 @@ public class AccountViewActivity extends AppCompatActivity {
 
     }
 
-    private void setUpRecyclableView() {
+    private void setUpListView() {
+
+        //FIXME: Implement a listview
+        adapter = new AccountAdapter(this, vault);
         accountList = findViewById(R.id.accountList);
-        layoutManager = new LinearLayoutManager(AccountViewActivity.this);
-        accountList.setLayoutManager(layoutManager);
-        adapter = new AccountAdapter(vault);
         accountList.setAdapter(adapter);
+
+        if(vault.size() == 0)
+        {
+            toggleAccountDetailsVisibility(true);
+            textAccountName.setText(R.string.ava_first_time);
+        }
     }
 
     /*============
@@ -180,12 +190,29 @@ public class AccountViewActivity extends AppCompatActivity {
         }
     }
 
-    private void showAccountDetails()
+    public void setActiveAccount(Account account)
+    {
+        activeAccount = account;
+    }
+
+    public void showAccountDetails()
     {
         textAccountName.setText(activeAccount.getAccountName());
         textUserName.setText(activeAccount.getUserName());
         textPassword.setText(hidePassword());
         textModified.setText(activeAccount.getDatePasswordChanged());
+
+        toggleAccountDetailsVisibility(false);
+    }
+
+    public void clearAccountDetails()
+    {
+        textAccountName.setText("");
+        textUserName.setText("");
+        textPassword.setText("");
+        textModified.setText("");
+
+        toggleAccountDetailsVisibility(true);
     }
 
     private String hidePassword()
@@ -201,10 +228,46 @@ public class AccountViewActivity extends AppCompatActivity {
     /*============
     * USER ACTIONS
     * ============*/
+    public void logOut()
+    {
+        Memory.saveMemory(this, vault, crypter, userPreferences);
+        vault = null;
+        crypter = null;
+        userPreferences = null;
+        super.onBackPressed();
+    }
+
+    public void onDialogPositiveClick(UserAction userAction)
+    {
+        switch(userAction)
+        {
+            case BACK:
+                logOut();
+                break;
+            //add more here as needed
+        }
+    }
+
+    public void onDialogNegativeClick(UserAction userAction)
+    {
+        //nothing yet
+    }
+
     private void showPassword()
     {
-        //FIXME: temporarily show the password
-        showSelectedOption("Showing password");
+        textPassword.setText(activeAccount.getPassword());
+        CountDownTimer timer = new CountDownTimer(500, 100) {
+            @Override
+            public void onTick(long l) {
+                //do nothing
+            }
+
+            @Override
+            public void onFinish() {
+                textPassword.setText(hidePassword());
+            }
+        };
+        timer.start();
     }
 
     private void copyToClipBoard(TextView viewPressed)
@@ -233,30 +296,46 @@ public class AccountViewActivity extends AppCompatActivity {
 
     private void deleteAccount()
     {
-        //FIXME: delete the account
-        showSelectedOption("Deleting account");
+        vault.deleteAccount(activeAccount.getAccountName());
+        adapter.notifyDataSetChanged();
+        if(vault.size() == 0)
+        {
+            activeAccount = null;
+            clearAccountDetails();
+            textAccountName.setText(R.string.ava_first_time);
+        }
+        else
+        {
+            activeAccount = vault.get(vault.size() - 1);
+            showAccountDetails();
+        }
     }
 
     private void addNewAccount()
     {
-        //FIXME: Need to figure out how to pass info from dialog back to activity
-        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.new_account, null));
-        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //do nothing
-            }
-        });
-        builder.show();
+        DialogFragment df = new NewAccountDialog();
+        df.show(getSupportFragmentManager(), "NewAccountDialog");
     }
+    public void onDialogAddAccount(String accName, String usrName, String pw)
+    {
+        if(vault.contains(accName))
+        {
+            Toast.makeText(this, R.string.warning_account_exists, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Account account = new Account(
+                    accName,
+                    usrName,
+                    (pw.equals(""))?new Generator().generatePassword():pw
+            );
+            vault.add(account);
+            adapter.notifyDataSetChanged();
+            setActiveAccount(account);
+            showAccountDetails();
+        }
+    }
+
 
     private void changeLogInAttempts()
     {
@@ -292,24 +371,7 @@ public class AccountViewActivity extends AppCompatActivity {
     * ================*/
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(AccountViewActivity.this);
-        builder.setMessage(R.string.log_out_prompt);
-        builder.setPositiveButton(R.string.log_out_continue, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //FIXME: Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
-                vault = null;
-                crypter = null;
-                AccountViewActivity.super.onBackPressed();
-            }
-        });
-        builder.setNegativeButton(R.string.log_out_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //do nothing
-            }
-        });
-        builder.create();
+        //FIXME: Create OnBackPressedDialog object (i.e. like NewAccountDialog)
     }
 
     @Override

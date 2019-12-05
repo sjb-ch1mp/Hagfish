@@ -15,7 +15,6 @@ import ch1mp.hagfish.exceptions.PasswordException;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.Memory;
 import ch1mp.hagfish.utils.PasswordParameters;
-import ch1mp.hagfish.utils.Prompt;
 import ch1mp.hagfish.utils.Vault;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         memory = Memory.getInstance(MainActivity.this);
         if(memory.isNew())
         {//run set up
-            labelPassword.setText(Prompt.SET_UP.getMessage());
+            labelPassword.setText(getString(R.string.login_first_time));
             txtPassword.requestFocus();
             txtPassword.setOnKeyListener(new View.OnKeyListener() {
                 @Override
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER)
                     {
                         password = txtPassword.getText().toString();
+                        txtPassword.setText("");
                         try
                         {
                             PasswordParameters.checkHagFishPassword(password);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {//memory successfully loaded - enter password
-            labelPassword.setText(Prompt.ENTER_PASSWORD.getMessage());
+            labelPassword.setText(getString(R.string.login_enter_pw));
 
             txtPassword.setOnKeyListener(new View.OnKeyListener()
             {
@@ -80,12 +80,19 @@ public class MainActivity extends AppCompatActivity {
                         vault = memory.getVault(new Crypter(password));
                         if(vault != null)
                         {
-
+                            //FIXME: successful login
                         }
                         else
                         {
-                            txtPassword.setText("");
-                            labelPassword.setText(Prompt.WRONG_PASSWORD.getMessage().replace("{remaining_attempts}", String.valueOf(memory.getRemainingAttempts())));
+                            if(memory.getRemainingAttempts() < 0)
+                            {
+                                MainActivity.this.deleteFile("mem.dat");
+                                labelPassword.setText(getString(R.string.login_attempts_exceeded));
+                            }
+                            else
+                            {
+                                labelPassword.setText(getString(R.string.login_wrong_pw).replace("{remaining_attempts}", String.valueOf(memory.getRemainingAttempts())));
+                            }
                         }
                     }
                     return false;

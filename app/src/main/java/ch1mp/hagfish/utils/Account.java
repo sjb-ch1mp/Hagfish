@@ -1,9 +1,6 @@
 package ch1mp.hagfish.utils;
 
-import android.widget.TextView;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -17,6 +14,7 @@ public class Account implements Serializable {
     private String userName;
     private String password;
     private Date datePasswordChanged;
+    private PasswordParameters passwordParameters;
 
     public Account(String accountName, String userName, String password)
     {
@@ -24,6 +22,7 @@ public class Account implements Serializable {
         this.userName = userName;
         this.password = password;
         datePasswordChanged = new Date();
+        passwordParameters = null;
     }
 
     //getters
@@ -31,6 +30,7 @@ public class Account implements Serializable {
     public String getUserName(){ return userName; }
     public String getPassword(){ return password; }
     public String getDatePasswordChanged(){ return datePasswordChanged.toString(); }
+    public PasswordParameters getPasswordParameters(){ return passwordParameters; }
 
     //setters - whenever the password is changed, update the datePasswordChanged field
     public void changeAccountName(String accountName){ this.accountName = accountName; }
@@ -40,10 +40,8 @@ public class Account implements Serializable {
         this.password = password;
         datePasswordChanged = new Date();
     }
-    public void generateNewPassword(PasswordParameters passwordParameters)
+    public void setPasswordParameters(PasswordParameters passwordParameters)
     {
-        Generator generator = new Generator(passwordParameters);
-        password = generator.generatePassword();
-        datePasswordChanged = new Date();
+        this.passwordParameters = passwordParameters;
     }
 }

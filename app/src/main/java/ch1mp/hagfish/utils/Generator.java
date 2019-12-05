@@ -13,8 +13,25 @@ public class Generator {
         this.passwordParameters = passwordParameters;
     }
 
+    public Generator()
+    {
+        this.passwordParameters = null;
+    }
+
+    public void updatePasswordParameters(PasswordParameters passwordParameters)
+    {
+        this.passwordParameters = passwordParameters;
+    }
+
     public String generatePassword()
     {
-        return null;
+        if(passwordParameters == null)
+        {
+            return "passwordWithoutParameters";
+        }
+        else
+        {
+            return "passwordWithParameters";
+        }
     }
 }

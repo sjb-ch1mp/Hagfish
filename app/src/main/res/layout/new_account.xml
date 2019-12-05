@@ -1,202 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLogo"
     android:gravity="center"
     android:orientation="vertical">
 
-
-    <TableRow
+    <EditText
+        android:id="@+id/new_account_name"
         android:layout_width="match_parent"
-        android:layout_height="2dp">
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/geo"
+        android:hint="@string/dialog_account_name"
+        android:inputType="text" />
 
-        <TextView
-            android:id="@+id/spacer14"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_span="4"
-            android:layout_weight="1" />
-    </TableRow>
-
-    <TableRow
+    <EditText
+        android:id="@+id/new_user_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_user_name"
+        android:fontFamily="@font/geo"
+        android:inputType="text|textEmailAddress" />
 
-        <TextView
-            android:id="@+id/spacer13"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/label_enter_account_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/enter_account_name"
-            android:textColor="@android:color/white"
-            android:textIsSelectable="false"
-            android:textSize="18sp"
-            app:fontFamily="@font/geo" />
-
-        <TextView
-            android:id="@+id/spacer12"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/text_enter_account_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:inputType="textNoSuggestions"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/spacer11"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </TableRow>
-
-
-    <TableRow
+    <EditText
+        android:id="@+id/new_password"
         android:layout_width="match_parent"
-        android:layout_height="2dp">
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_password"
+        android:fontFamily="@font/geo"
+        android:inputType="textPassword" />
 
-        <TextView
-            android:id="@+id/spacer9"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_span="4"
-            android:layout_weight="1" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/spacer4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/label_enter_user_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/enter_user_name"
-            android:textColor="@android:color/white"
-            android:textIsSelectable="false"
-            android:textSize="18sp"
-            app:fontFamily="@font/geo" />
-
-        <TextView
-            android:id="@+id/spacer1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/text_enter_user_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:inputType="textNoSuggestions"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/spacer6"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="2dp">
-
-        <TextView
-            android:id="@+id/spacer2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_span="4"
-            android:layout_weight="1" />
-    </TableRow>
-
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/spacer5"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/label_enter_password"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/enter_password"
-            android:textColor="@android:color/white"
-            android:textIsSelectable="false"
-            android:textSize="18sp"
-            app:fontFamily="@font/geo" />
-
-        <TextView
-            android:id="@+id/spacer3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/text_enter_password"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:ems="10"
-            android:inputType="textPassword"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/spacer7"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="2dp">
-
-        <TextView
-            android:id="@+id/spacer8"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_span="4"
-            android:layout_weight="1" />
-    </TableRow>
-
-
-</TableLayout>
+</LinearLayout>

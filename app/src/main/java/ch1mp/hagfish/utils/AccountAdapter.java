@@ -1,53 +1,46 @@
 package ch1mp.hagfish.utils;
 
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
+import ch1mp.hagfish.AccountViewActivity;
 import ch1mp.hagfish.R;
 
-public class AccountAdapter extends RecyclerView.Adapter {
+public class AccountAdapter extends ArrayAdapter<Account> {
 
-    private Vault vault;
+    Context context;
 
-    public static class AccountView extends RecyclerView.ViewHolder
+    public AccountAdapter(@NonNull Context context, @NonNull ArrayList<Account> objects) {
+        super(context, 0, objects);
+        this.context = context;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
     {
-        TextView textView;
-
-        public AccountView(TextView textView) {
-            super(textView);
-            this.textView = textView;
+        final Account account = getItem(position);
+        if(convertView == null)
+        {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.account_item_view, parent, false);
         }
-    }
 
-    public AccountAdapter(Vault vault)
-    {
-        this.vault = vault;
-    }
+        ((TextView) convertView).setText(account.getAccountName());
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AccountViewActivity) context).setActiveAccount(account);
+                ((AccountViewActivity) context).showAccountDetails();
+            }
+        });
 
-    @NonNull
-    @Override
-    public AccountAdapter.AccountView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        TextView tv = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_account_view, parent, false);
-        AccountView av = new AccountView(tv);
-        return av;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((AccountView) holder).textView.setText(vault.get(position).getAccountName());
-    }
-
-    @Override
-    public int getItemCount() {
-        return vault.size();
-    }
-
-    public Account getAccount(int position)
-    {
-        return vault.get(position);
+        return convertView;
     }
 }

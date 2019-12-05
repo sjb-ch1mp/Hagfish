@@ -26,11 +26,10 @@ public class Vault extends ArrayList<Account> implements Serializable {
 
     public void deleteAccount(String accountName)
     {
-        for(Account a : this)
-        {
-            if(a.getAccountName().equals(accountName))
-                remove(a);
-        }
+        int idx = 0;
+        while(!this.get(idx).getAccountName().equals(accountName))
+            idx++;
+        remove(idx);
     }
 
     public Account getAccount(String accountName) throws AccountException
