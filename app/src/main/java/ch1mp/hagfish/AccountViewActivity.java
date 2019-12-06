@@ -1,6 +1,5 @@
 package ch1mp.hagfish;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -14,11 +13,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
+import ch1mp.hagfish.dialogs.BackPressedDialog;
 import ch1mp.hagfish.dialogs.GeneralDialogListener;
 import ch1mp.hagfish.dialogs.NewAccountDialog;
 import ch1mp.hagfish.utils.Account;
@@ -34,9 +33,6 @@ public class AccountViewActivity
         extends AppCompatActivity
         implements NewAccountDialog.DialogListener, GeneralDialogListener {
 
-    //FIXME: When the application loses focus for a given time (e.g. 2 minutes) - close it
-    //FIXME: When the application closes - save the Memory and burn the vault and crypter
-
     Vault vault;
     Crypter crypter;
     Account activeAccount;
@@ -46,11 +42,10 @@ public class AccountViewActivity
     TextView textUserName;
     TextView textPassword;
     TextView textModified;
-    View selectedAccount;
     UserPreferences userPreferences;
-
     ListView accountList;
     ArrayAdapter<Account> adapter;
+    CountDownTimer idleTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +57,7 @@ public class AccountViewActivity
         setUpAccountMenu();
         setUpPressListeners();
         setUpListView();
+        resetIdleTimer();
     }
 
     /*============
@@ -76,10 +72,14 @@ public class AccountViewActivity
     private void setUpStores()
     {
         vault = Vault.retrieveVault(getIntent());
+        crypter = new Crypter(getIntent().getStringExtra("password"),
+                getIntent().getByteArrayExtra("seed"));
+        /*
         crypter = new Crypter(
                 getIntent().getByteArrayExtra("password"),
                 getIntent().getByteArrayExtra("seed")
         );
+        */
         userPreferences = (UserPreferences) getIntent().getSerializableExtra("userprefs");
     }
 
@@ -171,6 +171,21 @@ public class AccountViewActivity
         }
     }
 
+    public void resetIdleTimer()
+    {
+        idleTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long l) {
+                //do nothing
+            }
+
+            @Override
+            public void onFinish() {
+                logOut();
+            }
+        };
+    }
+
     /*============
     * UTIL METHODS
     * ============*/
@@ -231,10 +246,9 @@ public class AccountViewActivity
     public void logOut()
     {
         Memory.saveMemory(this, vault, crypter, userPreferences);
-        vault = null;
-        crypter = null;
-        userPreferences = null;
-        super.onBackPressed();
+        Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void onDialogPositiveClick(UserAction userAction)
@@ -273,25 +287,21 @@ public class AccountViewActivity
     private void copyToClipBoard(TextView viewPressed)
     {
         //FIXME: copy the user name or password to the clipboard
-        showSelectedOption("Copying to clipboard");
     }
 
     private void changeUserName()
     {
         //FIXME: change the user name
-        showSelectedOption("Changing user name");
     }
 
     private void changeAccountPassword()
     {
         //FIXME: change the password for the account
-        showSelectedOption("Changing account password");
     }
 
     private void generateNewAccountPassword()
     {
         //FIXME: generate a new password for the account
-        showSelectedOption("Generating new password");
     }
 
     private void deleteAccount()
@@ -320,7 +330,7 @@ public class AccountViewActivity
     {
         if(vault.contains(accName))
         {
-            Toast.makeText(this, R.string.warning_account_exists, Toast.LENGTH_SHORT).show();
+            showToast(R.string.warning_account_exists);
         }
         else
         {
@@ -336,34 +346,24 @@ public class AccountViewActivity
         }
     }
 
-
-    private void changeLogInAttempts()
+    private void changeUserPreferences()
     {
-        //FIXME: change log-in attempts
-        showSelectedOption("Changing Log in attempts allowed");
-    }
 
-    private void changeHagfishPassword()
-    {
-        //FIXME: change the Hagfish password
-        showSelectedOption("Changing Hagfish password");
     }
 
     private void destroyVault()
     {
         //FIXME: destroy the current vault
-        showSelectedOption("Destroying vault");
     }
 
     private void aboutHagfish()
     {
         //FIXME: show the user 'About' spheel
-        showSelectedOption("Showing About");
     }
 
-    private void showSelectedOption(String debugText)
+    private void showToast(int resId)
     {
-        Toast.makeText(AccountViewActivity.this, debugText, Toast.LENGTH_SHORT).show();
+        Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_SHORT).show();
     }
 
     /*================
@@ -372,11 +372,14 @@ public class AccountViewActivity
     @Override
     public void onBackPressed() {
         //FIXME: Create OnBackPressedDialog object (i.e. like NewAccountDialog)
+        resetIdleTimer();
+        BackPressedDialog bpd = new BackPressedDialog();
+        bpd.show(getSupportFragmentManager(), "BackPressedDialog");
     }
 
     @Override
     protected void onStop() {
-        //FIXME: Memory.saveMemory(AccountViewActivity.this, vault, crypter, userPreferences);
+        finish();
         super.onStop();
     }
 
@@ -391,16 +394,15 @@ public class AccountViewActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        resetIdleTimer();
+
         switch(item.getItemId())
         {
             case R.id.menu_item_new_account:
                 addNewAccount();
                 return true;
-            case R.id.menu_item_login:
-                changeLogInAttempts();
-                return true;
-            case R.id.menu_item_change_hagfish_pw:
-                changeHagfishPassword();
+            case R.id.menu_settings:
+                changeUserPreferences();
                 return true;
             case R.id.menu_item_delete_vault:
                 destroyVault();

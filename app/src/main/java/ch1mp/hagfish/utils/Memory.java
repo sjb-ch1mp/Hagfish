@@ -23,6 +23,7 @@ public class Memory implements Serializable {
     private static final String TAG = "Memory";
     private static final String MEMORY = "mem.dat";
     private byte[] encryptedVault;
+    private byte[] ivSeed;
     private int currentAttempts;
     private UserPreferences userPreferences;
 
@@ -116,6 +117,7 @@ public class Memory implements Serializable {
 
         try
         {
+            memory.ivSeed = crypter.getSeed();
             memory.encryptedVault = crypter.encryptVault(vault);
             FileOutputStream fos = context.openFileOutput(MEMORY, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -127,6 +129,21 @@ public class Memory implements Serializable {
             //Log.d(TAG, e.toString());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void saveMemory(Context context)
+    {
+        try
+        {
+            FileOutputStream fos = context.openFileOutput(MEMORY, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+        }
+        catch(Exception e)
+        {
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -195,4 +212,6 @@ public class Memory implements Serializable {
     public int getRemainingAttempts(){ return userPreferences.getMaxAttempts() - currentAttempts; }
     public UserPreferences getUserPreferences(){ return userPreferences; }
     public boolean isNew(){ return encryptedVault == null; }
+    public boolean hasSeed(){ return ivSeed != null; }
+    public byte[] getSeed(){ return ivSeed; }
 }

@@ -1,6 +1,5 @@
 package ch1mp.hagfish.utils;
-
-//import android.util.Log;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +20,6 @@ public class Crypter {
     private static final String TAG = "Crypter";
     private SecretKey key;
     private IvParameterSpec iv;
-    private byte[] hash;
     private byte[] seed;
 
     public Crypter(String password)
@@ -30,12 +28,11 @@ public class Crypter {
         iv = generateIV();
     }
 
-    public Crypter(byte[] password, byte[] seed)
+    public Crypter(String password, byte[] seed)
     {
-        key = new SecretKeySpec(password, "AES");
+        key = generateKey(password);
         iv = new IvParameterSpec(seed);
-        seed = null;
-        hash = null;
+        this.seed = seed;
     }
 
     public Vault decryptVault(byte[] encryptedVault)
@@ -51,7 +48,8 @@ public class Crypter {
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            Log.d(this.getClass().getSimpleName(), e.toString());
+            //e.printStackTrace();
             return null;
         }
     }
@@ -106,7 +104,6 @@ public class Crypter {
         {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password.getBytes("UTF-8"));
-            hash = md.digest();
             return new SecretKeySpec(md.digest(), "AES");
         }
         catch(Exception e)
@@ -116,6 +113,5 @@ public class Crypter {
         }
     }
 
-    public byte[] getHash(){ return hash; }
     public byte[] getSeed(){ return seed; }
 }

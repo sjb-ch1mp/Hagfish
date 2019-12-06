@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.File;
-
 import ch1mp.hagfish.exceptions.PasswordException;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.Memory;
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {//memory successfully loaded - enter password
-            labelPassword.setText(getString(R.string.login_enter_pw));
+            labelPassword.setText(getString(R.string.login_enter_pw).replace("{remaining_attempts}", String.valueOf(memory.getRemainingAttempts())));
 
             txtPassword.setOnKeyListener(new View.OnKeyListener()
             {
@@ -76,18 +74,26 @@ public class MainActivity extends AppCompatActivity {
                     if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER)
                     {
                         txtPassword.setText("");
-                        crypter = new Crypter(password);
-                        vault = memory.getVault(new Crypter(password));
-                        if(vault != null)
+                        if(memory.hasSeed())
                         {
-                            //FIXME: successful login
+                            crypter = new Crypter(password, memory.getSeed());
                         }
                         else
                         {
-                            if(memory.getRemainingAttempts() < 0)
+                            crypter = new Crypter(password);
+                        }
+                        vault = memory.getVault(new Crypter(password));
+                        if(vault != null)
+                        {
+
+                        }
+                        else
+                        {
+                            if(memory.getRemainingAttempts() <= 0)
                             {
-                                MainActivity.this.deleteFile("mem.dat");
+                                clearMemory();
                                 labelPassword.setText(getString(R.string.login_attempts_exceeded));
+                                txtPassword.setEnabled(false);
                             }
                             else
                             {
@@ -113,10 +119,29 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(MainActivity.this, AccountViewActivity.class);
         intent.putExtra("vault", vault);
-        intent.putExtra("password", crypter.getHash());
+        intent.putExtra("password", password);
+        //intent.putExtra("password", crypter.getHash());
         intent.putExtra("seed", crypter.getSeed());
         intent.putExtra("userprefs", memory.getUserPreferences());
-        memory = null;
+        clearMemory();
         startActivity(intent);
+        finish();
+    }
+
+    private void clearMemory()
+    {
+        memory = null;
+        MainActivity.this.deleteFile("mem.dat");
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(memory != null) memory.saveMemory(this);
+        super.onDestroy();
     }
 }
