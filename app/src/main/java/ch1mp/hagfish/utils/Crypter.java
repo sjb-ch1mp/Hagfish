@@ -6,33 +6,43 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.NoSuchPaddingException;
 
 public class Crypter {
 
-    //FIXME: Implement Parcelable so that this can be passed from MainActivity to AccountViewActivity
-
     private static final String TAG = "Crypter";
-    private SecretKey key;
-    private IvParameterSpec iv;
-    private byte[] seed;
+    private CrypterKey key;
 
+    /**
+     * Invoked when a fresh instance of Hagfish is being made
+     * @param password
+     */
     public Crypter(String password)
     {
-        key = generateKey(password);
-        iv = generateIV();
+        key = new CrypterKey(hashPassword(password), generateIvSeed());
     }
 
+    /**
+     * Invoked after passing key from MainActivity to AccountViewActivity
+     * @param key
+     */
+    public Crypter(CrypterKey key)
+    {
+        this.key = key;
+    }
+
+    /**
+     * Invoked when attempting to decrypt the vault
+     * @param password
+     * @param seed
+     */
     public Crypter(String password, byte[] seed)
     {
-        key = generateKey(password);
-        iv = new IvParameterSpec(seed);
-        this.seed = seed;
+        this.key = new CrypterKey(hashPassword(password), seed);
     }
 
     public Vault decryptVault(byte[] encryptedVault)
@@ -40,7 +50,7 @@ public class Crypter {
         try
         {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+            cipher.init(Cipher.DECRYPT_MODE, key.getKey(), key.getIV());
             byte[] decryptedVault = cipher.doFinal(encryptedVault);
             ByteArrayInputStream bais = new ByteArrayInputStream(decryptedVault);
             ObjectInputStream ois = new ObjectInputStream(bais);
@@ -49,7 +59,6 @@ public class Crypter {
         catch(Exception e)
         {
             Log.d(this.getClass().getSimpleName(), e.toString());
-            //e.printStackTrace();
             return null;
         }
     }
@@ -63,8 +72,45 @@ public class Crypter {
             oos.writeObject(vault);
             byte[] unencryptedVault = baos.toByteArray();
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, key.getKey(), key.getIV());
             return cipher.doFinal(unencryptedVault);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private byte[] generateIvSeed()
+    {
+        try
+        {
+            Random rand = new Random();
+            byte[] ivSeed = new byte[Cipher.getInstance("AES/CBC/PKCS5Padding").getBlockSize()];
+            for(int i=0; i<ivSeed.length; i++)
+            {
+                ivSeed[i] = (byte) rand.nextInt();
+            }
+            return ivSeed;
+        }
+        catch(NoSuchAlgorithmException e)
+        {
+            return null;
+        }
+        catch(NoSuchPaddingException e)
+        {
+            return null;
+        }
+    }
+
+    private byte[] hashPassword(String password)
+    {
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password.getBytes());
+            return md.digest();
         }
         catch(Exception e)
         {
@@ -75,43 +121,12 @@ public class Crypter {
 
     public void changePassword(String password)
     {
-        key = generateKey(password);
+        key = new CrypterKey(hashPassword(password), generateIvSeed());
     }
 
-    private IvParameterSpec generateIV()
+    public CrypterKey getKey()
     {
-        Random rand = new Random();
-        try
-        {
-            byte[] iv = new byte[Cipher.getInstance("AES/CBC/PKCS5Padding").getBlockSize()];
-            for(int i=0; i<iv.length; i++)
-            {
-                iv[i] = (byte) rand.nextInt();
-            }
-            seed = iv;
-            return new IvParameterSpec(iv);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        return key;
     }
 
-    private SecretKey generateKey(String password)
-    {
-        try
-        {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(password.getBytes("UTF-8"));
-            return new SecretKeySpec(md.digest(), "AES");
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public byte[] getSeed(){ return seed; }
 }

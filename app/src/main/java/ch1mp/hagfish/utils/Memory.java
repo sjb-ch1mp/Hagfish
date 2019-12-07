@@ -3,7 +3,6 @@ package ch1mp.hagfish.utils;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -62,42 +61,12 @@ public class Memory implements Serializable {
         }
         catch(FileNotFoundException e)
         {
-            //Log.d(TAG, MEMORY + " not found. Creating new Memory.");
-            System.out.println("File not found. Creating new Memory");
+            Log.d(TAG, MEMORY + " not found. Creating new Memory.");
             return new Memory();
         }
         catch(Exception e)
         {
-            //Log.d(TAG, e.toString());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Overloaded getInstance method for testing purposes.
-     *
-     * @param fileName
-     * @return Memory
-     */
-    public static Memory getInstance(String fileName)
-    {
-        try
-        {
-            FileInputStream fis = new FileInputStream(fileName);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fis);
-            return (Memory) objectInputStream.readObject();
-        }
-        catch(FileNotFoundException e)
-        {
-            //Log.d(TAG, MEMORY + " not found. Creating new Memory.");
-            System.out.println("File not found. Creating new Memory");
-            return new Memory();
-        }
-        catch(Exception e)
-        {
-            //Log.d(TAG, e.toString());
-            e.printStackTrace();
+            Log.d(TAG, e.toString());
             return null;
         }
     }
@@ -114,10 +83,10 @@ public class Memory implements Serializable {
     public static boolean saveMemory(Context context, Vault vault, Crypter crypter, UserPreferences userPreferences)
     {
         Memory memory = new Memory(userPreferences);
+        memory.ivSeed = crypter.getKey().getSeed();
 
         try
         {
-            memory.ivSeed = crypter.getSeed();
             memory.encryptedVault = crypter.encryptVault(vault);
             FileOutputStream fos = context.openFileOutput(MEMORY, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -126,12 +95,16 @@ public class Memory implements Serializable {
         }
         catch(Exception e)
         {
-            //Log.d(TAG, e.toString());
-            e.printStackTrace();
+            Log.d(TAG, e.toString());
             return false;
         }
     }
 
+    /**
+     * This method is used to save the currently loaded memory on the log in screen.
+     * This ensures that the login attempts are tracked.
+     * @param context
+     */
     public void saveMemory(Context context)
     {
         try
@@ -146,32 +119,6 @@ public class Memory implements Serializable {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Overloaded save method for testing
-     * @param fileName
-     * @param vault
-     * @param crypter
-     * @return boolean
-     */
-    public boolean saveMemory(String fileName, Vault vault, Crypter crypter)
-    {
-        try
-        {
-            encryptedVault = crypter.encryptVault(vault);
-            FileOutputStream fos = new FileOutputStream(fileName);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
-            return true;
-        }
-        catch(Exception e)
-        {
-            //Log.d(TAG, e.toString());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 
     /**
      * Takes a password from the user and attempts to decrypt the encrypted Vault.
@@ -214,4 +161,84 @@ public class Memory implements Serializable {
     public boolean isNew(){ return encryptedVault == null; }
     public boolean hasSeed(){ return ivSeed != null; }
     public byte[] getSeed(){ return ivSeed; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //testing
+    /**
+     * Overloaded getInstance method for testing purposes.
+     *
+     * @param fileName
+     * @return Memory
+     */
+    public static Memory getInstance(String fileName)
+    {
+        try
+        {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fis);
+            return (Memory) objectInputStream.readObject();
+        }
+        catch(FileNotFoundException e)
+        {
+            //Log.d(TAG, MEMORY + " not found. Creating new Memory.");
+            System.out.println("File not found. Creating new Memory");
+            return new Memory();
+        }
+        catch(Exception e)
+        {
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Overloaded save method for testing
+     * @param fileName
+     * @param vault
+     * @param crypter
+     * @return boolean
+     */
+    public boolean saveMemory(String fileName, Vault vault, Crypter crypter)
+    {
+        try
+        {
+            encryptedVault = crypter.encryptVault(vault);
+            FileOutputStream fos = new FileOutputStream(fileName);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+            return true;
+        }
+        catch(Exception e)
+        {
+            //Log.d(TAG, e.toString());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

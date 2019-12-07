@@ -17,12 +17,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
 import ch1mp.hagfish.dialogs.BackPressedDialog;
 import ch1mp.hagfish.dialogs.GeneralDialogListener;
 import ch1mp.hagfish.dialogs.NewAccountDialog;
+import ch1mp.hagfish.dialogs.SettingsDialog;
 import ch1mp.hagfish.utils.Account;
 import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
+import ch1mp.hagfish.utils.CrypterKey;
 import ch1mp.hagfish.utils.Generator;
 import ch1mp.hagfish.utils.Memory;
 import ch1mp.hagfish.utils.UserAction;
@@ -31,7 +35,9 @@ import ch1mp.hagfish.utils.Vault;
 
 public class AccountViewActivity
         extends AppCompatActivity
-        implements NewAccountDialog.DialogListener, GeneralDialogListener {
+        implements NewAccountDialog.DialogListener,
+        GeneralDialogListener,
+        SettingsDialog.DialogListener {
 
     Vault vault;
     Crypter crypter;
@@ -71,16 +77,9 @@ public class AccountViewActivity
 
     private void setUpStores()
     {
-        vault = Vault.retrieveVault(getIntent());
-        crypter = new Crypter(getIntent().getStringExtra("password"),
-                getIntent().getByteArrayExtra("seed"));
-        /*
-        crypter = new Crypter(
-                getIntent().getByteArrayExtra("password"),
-                getIntent().getByteArrayExtra("seed")
-        );
-        */
-        userPreferences = (UserPreferences) getIntent().getSerializableExtra("userprefs");
+        vault = Vault.retrieveVault((ArrayList<Account>) getIntent().getSerializableExtra("vault"));
+        crypter = new Crypter((CrypterKey) getIntent().getSerializableExtra("key"));
+        userPreferences = (UserPreferences) getIntent().getSerializableExtra("prefs");
     }
 
     private void setUpLabels()
@@ -99,6 +98,7 @@ public class AccountViewActivity
         accountMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+                resetIdleTimer();
                 switch(menuItem.getItemId())
                 {
                     case R.id.account_un_change:
@@ -125,6 +125,7 @@ public class AccountViewActivity
         textUserName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                resetIdleTimer();
                 copyToClipBoard((TextView) view);
                 return true;
             }
@@ -133,6 +134,7 @@ public class AccountViewActivity
         textPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                resetIdleTimer();
                 showPassword();
             }
         });
@@ -140,6 +142,7 @@ public class AccountViewActivity
         textPassword.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                resetIdleTimer();
                 copyToClipBoard((TextView) view);
                 return true;
             }
@@ -148,6 +151,7 @@ public class AccountViewActivity
         textAccountName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                resetIdleTimer();
                 if(!textAccountName.getText().toString().equals(getString(R.string.ava_first_time)))
                 {
                     accountMenu.show();
@@ -157,9 +161,8 @@ public class AccountViewActivity
 
     }
 
-    private void setUpListView() {
-
-        //FIXME: Implement a listview
+    private void setUpListView()
+    {
         adapter = new AccountAdapter(this, vault);
         accountList = findViewById(R.id.accountList);
         accountList.setAdapter(adapter);
@@ -169,11 +172,16 @@ public class AccountViewActivity
             toggleAccountDetailsVisibility(true);
             textAccountName.setText(R.string.ava_first_time);
         }
+        else
+        {
+            activeAccount = vault.get(0);
+            showAccountDetails();
+        }
     }
 
     public void resetIdleTimer()
     {
-        idleTimer = new CountDownTimer(60000, 1000) {
+        idleTimer = new CountDownTimer(userPreferences.getMaxIdle(), 1000) {
             @Override
             public void onTick(long l) {
                 //do nothing
@@ -184,6 +192,7 @@ public class AccountViewActivity
                 logOut();
             }
         };
+        idleTimer.start();
     }
 
     /*============
@@ -245,6 +254,8 @@ public class AccountViewActivity
     * ============*/
     public void logOut()
     {
+        showToast(R.string.warning_idle_out);
+        idleTimer = null;
         Memory.saveMemory(this, vault, crypter, userPreferences);
         Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
         startActivity(intent);
@@ -270,7 +281,7 @@ public class AccountViewActivity
     private void showPassword()
     {
         textPassword.setText(activeAccount.getPassword());
-        CountDownTimer timer = new CountDownTimer(500, 100) {
+        CountDownTimer timer = new CountDownTimer(userPreferences.getMaxPasswordShowTime(), 100) {
             @Override
             public void onTick(long l) {
                 //do nothing
@@ -348,8 +359,17 @@ public class AccountViewActivity
 
     private void changeUserPreferences()
     {
-
+        DialogFragment df = new SettingsDialog(userPreferences);
+        df.show(getSupportFragmentManager(), "SettingsDialog");
     }
+    public void updateSettings(int loginAttempts, int idleTime, int showPWTime)
+    {
+        userPreferences.setMaxAttempts(loginAttempts);
+        userPreferences.setMaxIdle(idleTime * 60000);
+        userPreferences.setMaxPasswordShowTime(showPWTime * 1000);
+        showToast(R.string.warning_prefs_changed);
+    }
+
 
     private void destroyVault()
     {
@@ -372,15 +392,8 @@ public class AccountViewActivity
     @Override
     public void onBackPressed() {
         //FIXME: Create OnBackPressedDialog object (i.e. like NewAccountDialog)
-        resetIdleTimer();
         BackPressedDialog bpd = new BackPressedDialog();
         bpd.show(getSupportFragmentManager(), "BackPressedDialog");
-    }
-
-    @Override
-    protected void onStop() {
-        finish();
-        super.onStop();
     }
 
     @Override
@@ -409,6 +422,9 @@ public class AccountViewActivity
                 return true;
             case R.id.menu_item_about:
                 aboutHagfish();
+                return true;
+            case R.id.menu_item_logout:
+                logOut();
                 return true;
             default:
                 return false;

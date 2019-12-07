@@ -26,7 +26,7 @@ public class NewAccountDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final LayoutInflater inflater = this.requireActivity().getLayoutInflater();
 
-        View dialogView = inflater.inflate(R.layout.new_account, null);
+        View dialogView = inflater.inflate(R.layout.dialog_new_account, null);
         final EditText accName = dialogView.findViewById(R.id.new_account_name);
         final EditText usrName = dialogView.findViewById(R.id.new_user_name);
         final EditText pw = dialogView.findViewById(R.id.new_password);

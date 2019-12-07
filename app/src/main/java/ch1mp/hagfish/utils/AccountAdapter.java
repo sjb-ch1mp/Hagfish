@@ -29,13 +29,14 @@ public class AccountAdapter extends ArrayAdapter<Account> {
         final Account account = getItem(position);
         if(convertView == null)
         {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.account_item_view, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.listview_item, parent, false);
         }
 
         ((TextView) convertView).setText(account.getAccountName());
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((AccountViewActivity) context).resetIdleTimer();
                 ((AccountViewActivity) context).setActiveAccount(account);
                 ((AccountViewActivity) context).showAccountDetails();
             }

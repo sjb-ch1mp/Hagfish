@@ -1,9 +1,5 @@
 package ch1mp.hagfish.utils;
 
-import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -52,17 +48,10 @@ public class Vault extends ArrayList<Account> implements Serializable {
         return false;
     }
 
-    public static Vault retrieveVault(Intent intent)
+    public static Vault retrieveVault(ArrayList<Account> accountList)
     {
         Vault vault = new Vault();
-        Account account;
-        int idx = 0;
-
-        while((account = (Account) intent.getSerializableExtra("account" + idx)) != null)
-        {
-            vault.add(account);
-        }
-
+        vault.addAll(accountList);
         return vault;
     }
 }

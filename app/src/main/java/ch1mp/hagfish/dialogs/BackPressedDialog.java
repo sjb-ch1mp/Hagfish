@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -24,7 +21,7 @@ public class BackPressedDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = this.requireActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.back_pressed_view, null))
+        builder.setView(inflater.inflate(R.layout.dialog_back_pressed, null))
                 .setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
