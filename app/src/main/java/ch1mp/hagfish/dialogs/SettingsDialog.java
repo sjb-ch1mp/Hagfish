@@ -50,12 +50,7 @@ public class SettingsDialog extends DialogFragment {
                                 sbPassword.getProgress() + 1);
                     }
                 })
-                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //do nothing
-                    }
-                });
+                .setNegativeButton(R.string.dialog_cancel, null);
         return builder.create();
     }
 

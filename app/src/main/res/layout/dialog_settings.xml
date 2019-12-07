@@ -13,9 +13,10 @@
 
         <TextView
             android:id="@+id/text_settings_login_attempts"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="5dp"
             android:paddingTop="5dp"
             android:text="@string/dialog_login_attempts"
             android:textStyle="bold"
@@ -25,16 +26,15 @@
             android:id="@+id/textView15"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="right"
             android:paddingTop="5dp"
             android:text=" 1"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
 
         <SeekBar
             android:id="@+id/seekBar_login_attempts"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:max="9"
@@ -44,11 +44,10 @@
             android:id="@+id/textView16"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="left"
             android:paddingTop="5dp"
             android:text="10"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
     </LinearLayout>
 
@@ -59,9 +58,10 @@
 
         <TextView
             android:id="@+id/text_settings_password_timer"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="5dp"
             android:paddingTop="5dp"
             android:text="@string/dialog_password_timer"
             android:textStyle="bold"
@@ -71,16 +71,15 @@
             android:id="@+id/textView17"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="right"
             android:paddingTop="5dp"
             android:text=" 1"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
 
         <SeekBar
             android:id="@+id/seekBar_password_timer"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:max="4"
@@ -90,11 +89,10 @@
             android:id="@+id/textView18"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="left"
             android:paddingTop="5dp"
             android:text=" 5"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
         <!-- 1 to 5 seconds -->
 
@@ -107,9 +105,10 @@
 
         <TextView
             android:id="@+id/text_settings_idle_timer"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="5dp"
             android:paddingTop="5dp"
             android:text="@string/dialog_idle_timer"
             android:textStyle="bold"
@@ -119,16 +118,15 @@
             android:id="@+id/textView19"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="right"
             android:paddingTop="5dp"
             android:text=" 1"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
 
         <SeekBar
             android:id="@+id/seekBar_idle_timer"
-            android:layout_width="50dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:max="4"
@@ -138,11 +136,10 @@
             android:id="@+id/textView20"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.20"
+            android:layout_weight="1"
             android:gravity="left"
             android:paddingTop="5dp"
             android:text=" 5"
-            android:textStyle="italic"
             app:fontFamily="@font/geo" />
         <!-- 1 to 5 minutes -->
 

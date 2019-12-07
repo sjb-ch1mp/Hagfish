@@ -19,25 +19,26 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
 
-import ch1mp.hagfish.dialogs.BackPressedDialog;
-import ch1mp.hagfish.dialogs.GeneralDialogListener;
+import ch1mp.hagfish.dialogs.AboutHagfishDialog;
+import ch1mp.hagfish.dialogs.ChangeFieldDialog;
 import ch1mp.hagfish.dialogs.NewAccountDialog;
 import ch1mp.hagfish.dialogs.SettingsDialog;
+import ch1mp.hagfish.dialogs.WarningDialog;
 import ch1mp.hagfish.utils.Account;
 import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.CrypterKey;
 import ch1mp.hagfish.utils.Generator;
 import ch1mp.hagfish.utils.Memory;
-import ch1mp.hagfish.utils.UserAction;
 import ch1mp.hagfish.utils.UserPreferences;
 import ch1mp.hagfish.utils.Vault;
 
 public class AccountViewActivity
         extends AppCompatActivity
         implements NewAccountDialog.DialogListener,
-        GeneralDialogListener,
-        SettingsDialog.DialogListener {
+        SettingsDialog.DialogListener,
+        WarningDialog.DialogListener,
+        ChangeFieldDialog.DialogListener {
 
     Vault vault;
     Crypter crypter;
@@ -111,7 +112,7 @@ public class AccountViewActivity
                         generateNewAccountPassword();
                         return true;
                     case R.id.account_delete:
-                        deleteAccount();
+                        deleteAccountWarning();
                         return true;
                     default:
                         return false;
@@ -122,29 +123,11 @@ public class AccountViewActivity
 
     private void setUpPressListeners() {
 
-        textUserName.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                resetIdleTimer();
-                copyToClipBoard((TextView) view);
-                return true;
-            }
-        });
-
         textPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 resetIdleTimer();
                 showPassword();
-            }
-        });
-
-        textPassword.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                resetIdleTimer();
-                copyToClipBoard((TextView) view);
-                return true;
             }
         });
 
@@ -181,6 +164,8 @@ public class AccountViewActivity
 
     public void resetIdleTimer()
     {
+        if(idleTimer != null) idleTimer.cancel();
+
         idleTimer = new CountDownTimer(userPreferences.getMaxIdle(), 1000) {
             @Override
             public void onTick(long l) {
@@ -195,9 +180,228 @@ public class AccountViewActivity
         idleTimer.start();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflator = getMenuInflater();
+        inflator.inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        resetIdleTimer();
+        switch(item.getItemId())
+        {
+            case R.id.menu_item_new_account:
+                addNewAccount();
+                return true;
+            case R.id.menu_settings:
+                changeUserPreferences();
+                return true;
+            case R.id.menu_item_delete_vault:
+                deleteAllAccountsWarning();
+                return true;
+            case R.id.menu_item_about:
+                aboutHagfish();
+                return true;
+            case R.id.menu_item_logout:
+                logOut();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+    /*================
+    * DIALOG FRAGMENTS
+    * ================*/
+    private void changeUserName()
+    {
+        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.USER_NAME);
+        df.show(getSupportFragmentManager(), "ChangeFieldDialog_UserName");
+    }
+
+    private void changeAccountPassword()
+    {
+        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.ACCOUNT_PASSWORD);
+        df.show(getSupportFragmentManager(), "ChangeFieldDialog_Acc_PW");
+    }
+
+    private void generateNewAccountPassword()
+    {
+        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.HAGFISH_PASSWORD);
+        df.show(getSupportFragmentManager(), "ChangeFieldDialog_HF_PW");
+    }
+
+    private void deleteAccountWarning()
+    {
+        DialogFragment df = new WarningDialog(WarningDialog.Action.DELETE_ACCOUNT);
+        df.show(getSupportFragmentManager(), "WarningDialog_Delete_Acc");
+    }
+
+    private void changeUserPreferences()
+    {
+        DialogFragment df = new SettingsDialog(userPreferences);
+        df.show(getSupportFragmentManager(), "SettingsDialog");
+    }
+
+    private void addNewAccount()
+    {
+        DialogFragment df = new NewAccountDialog();
+        df.show(getSupportFragmentManager(), "NewAccountDialog");
+    }
+
+    private void deleteAllAccountsWarning()
+    {
+        DialogFragment df = new WarningDialog(WarningDialog.Action.BURN_VAULT);
+        df.show(getSupportFragmentManager(), "WarningDialog_Burn_Vault");
+    }
+
+    private void aboutHagfish()
+    {
+        DialogFragment df = new AboutHagfishDialog();
+        df.show(getSupportFragmentManager(), "AboutHagfishDialog");
+    }
+
+    @Override
+    public void onBackPressed() {
+        DialogFragment df = new WarningDialog(WarningDialog.Action.GO_BACK);
+        df.show(getSupportFragmentManager(), "WarningDialog_GoBack");
+    }
+
+    /*=========
+    * LISTENERS
+    * =========*/
+    public void doAction(WarningDialog.Action action) //listener
+    {
+        switch(action)
+        {
+            case GO_BACK:
+                logOut();
+                break;
+            case DELETE_ACCOUNT:
+                deleteAccount();
+                break;
+            case BURN_VAULT:
+                burnVault();
+        }
+    }
+
+    public void updateField(String newValue, ChangeFieldDialog.Field field) //LISTENER
+    {
+        switch(field)
+        {
+            case USER_NAME:
+                activeAccount.changeUserName(newValue);
+                showAccountDetails();
+                showToast(R.string.dialog_user_updated);
+                break;
+            case ACCOUNT_PASSWORD:
+                activeAccount.changePassword(newValue);
+                showAccountDetails();
+                showToast(R.string.dialog_acc_pw_updated);
+                break;
+            case HAGFISH_PASSWORD:
+                crypter.changePassword(newValue);
+                showToast(R.string.dialog_hf_pw_updated);
+        }
+    }
+
+    public void onDialogAddAccount(String accName, String usrName, String pw) //listener
+    {
+        if(vault.contains(accName))
+        {
+            showToast(R.string.warning_account_exists);
+        }
+        else
+        {
+            Account account = new Account(
+                    accName,
+                    usrName,
+                    (pw.equals(""))?new Generator().generatePassword():pw
+            );
+            vault.add(account);
+            adapter.notifyDataSetChanged();
+            setActiveAccount(account);
+            showAccountDetails();
+        }
+    }
+
+    public void updateSettings(int loginAttempts, int idleTime, int showPWTime) //listener
+    {
+        userPreferences.setMaxAttempts(loginAttempts);
+        userPreferences.setMaxIdle(idleTime * 60000);
+        userPreferences.setMaxPasswordShowTime(showPWTime * 1000);
+        showToast(R.string.warning_prefs_changed);
+    }
+
     /*============
-    * UTIL METHODS
-    * ============*/
+     * UTIL METHODS
+     * ============*/
+    private void burnVault()
+    {
+        vault.clear();
+        adapter.notifyDataSetChanged();
+        activeAccount = null;
+        clearAccountDetails();
+        textAccountName.setText(R.string.ava_first_time);
+    }
+
+    private void showPassword()
+    {
+        textPassword.setText(activeAccount.getPassword());
+        CountDownTimer timer = new CountDownTimer(userPreferences.getMaxPasswordShowTime(), 100) {
+            @Override
+            public void onTick(long l) {
+                //do nothing
+            }
+
+            @Override
+            public void onFinish() {
+                textPassword.setText(hidePassword());
+            }
+        };
+        timer.start();
+    }
+
+    private void deleteAccount()
+    {
+        vault.deleteAccount(activeAccount.getAccountName());
+        adapter.notifyDataSetChanged();
+        if(vault.size() == 0)
+        {
+            activeAccount = null;
+            clearAccountDetails();
+            textAccountName.setText(R.string.ava_first_time);
+        }
+        else
+        {
+            activeAccount = vault.get(vault.size() - 1);
+            showAccountDetails();
+        }
+    }
+
+    private void showToast(int resId)
+    {
+        Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
+    public void logOut()
+    {
+        showToast(R.string.warning_idle_out);
+
+        idleTimer.cancel();
+
+        Memory.saveMemory(this, vault, crypter, userPreferences);
+
+        Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void toggleAccountDetailsVisibility(boolean currentlyVisible)
     {
         if(!currentlyVisible)
@@ -247,187 +451,5 @@ public class AccountViewActivity
             hiddenPassword += "*";
         }
         return hiddenPassword;
-    }
-
-    /*============
-    * USER ACTIONS
-    * ============*/
-    public void logOut()
-    {
-        showToast(R.string.warning_idle_out);
-        idleTimer = null;
-        Memory.saveMemory(this, vault, crypter, userPreferences);
-        Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    public void onDialogPositiveClick(UserAction userAction)
-    {
-        switch(userAction)
-        {
-            case BACK:
-                logOut();
-                break;
-            //add more here as needed
-        }
-    }
-
-    public void onDialogNegativeClick(UserAction userAction)
-    {
-        //nothing yet
-    }
-
-    private void showPassword()
-    {
-        textPassword.setText(activeAccount.getPassword());
-        CountDownTimer timer = new CountDownTimer(userPreferences.getMaxPasswordShowTime(), 100) {
-            @Override
-            public void onTick(long l) {
-                //do nothing
-            }
-
-            @Override
-            public void onFinish() {
-                textPassword.setText(hidePassword());
-            }
-        };
-        timer.start();
-    }
-
-    private void copyToClipBoard(TextView viewPressed)
-    {
-        //FIXME: copy the user name or password to the clipboard
-    }
-
-    private void changeUserName()
-    {
-        //FIXME: change the user name
-    }
-
-    private void changeAccountPassword()
-    {
-        //FIXME: change the password for the account
-    }
-
-    private void generateNewAccountPassword()
-    {
-        //FIXME: generate a new password for the account
-    }
-
-    private void deleteAccount()
-    {
-        vault.deleteAccount(activeAccount.getAccountName());
-        adapter.notifyDataSetChanged();
-        if(vault.size() == 0)
-        {
-            activeAccount = null;
-            clearAccountDetails();
-            textAccountName.setText(R.string.ava_first_time);
-        }
-        else
-        {
-            activeAccount = vault.get(vault.size() - 1);
-            showAccountDetails();
-        }
-    }
-
-    private void addNewAccount()
-    {
-        DialogFragment df = new NewAccountDialog();
-        df.show(getSupportFragmentManager(), "NewAccountDialog");
-    }
-    public void onDialogAddAccount(String accName, String usrName, String pw)
-    {
-        if(vault.contains(accName))
-        {
-            showToast(R.string.warning_account_exists);
-        }
-        else
-        {
-            Account account = new Account(
-                    accName,
-                    usrName,
-                    (pw.equals(""))?new Generator().generatePassword():pw
-            );
-            vault.add(account);
-            adapter.notifyDataSetChanged();
-            setActiveAccount(account);
-            showAccountDetails();
-        }
-    }
-
-    private void changeUserPreferences()
-    {
-        DialogFragment df = new SettingsDialog(userPreferences);
-        df.show(getSupportFragmentManager(), "SettingsDialog");
-    }
-    public void updateSettings(int loginAttempts, int idleTime, int showPWTime)
-    {
-        userPreferences.setMaxAttempts(loginAttempts);
-        userPreferences.setMaxIdle(idleTime * 60000);
-        userPreferences.setMaxPasswordShowTime(showPWTime * 1000);
-        showToast(R.string.warning_prefs_changed);
-    }
-
-
-    private void destroyVault()
-    {
-        //FIXME: destroy the current vault
-    }
-
-    private void aboutHagfish()
-    {
-        //FIXME: show the user 'About' spheel
-    }
-
-    private void showToast(int resId)
-    {
-        Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_SHORT).show();
-    }
-
-    /*================
-    * ACTIVITY METHODS
-    * ================*/
-    @Override
-    public void onBackPressed() {
-        //FIXME: Create OnBackPressedDialog object (i.e. like NewAccountDialog)
-        BackPressedDialog bpd = new BackPressedDialog();
-        bpd.show(getSupportFragmentManager(), "BackPressedDialog");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        MenuInflater inflator = getMenuInflater();
-        inflator.inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        resetIdleTimer();
-
-        switch(item.getItemId())
-        {
-            case R.id.menu_item_new_account:
-                addNewAccount();
-                return true;
-            case R.id.menu_settings:
-                changeUserPreferences();
-                return true;
-            case R.id.menu_item_delete_vault:
-                destroyVault();
-                return true;
-            case R.id.menu_item_about:
-                aboutHagfish();
-                return true;
-            case R.id.menu_item_logout:
-                logOut();
-                return true;
-            default:
-                return false;
-        }
     }
 }

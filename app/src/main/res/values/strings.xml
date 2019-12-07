@@ -29,18 +29,33 @@
     <string name="dialog_new_account">New Account</string>
     <string name="dialog_continue">Continue</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_close">Close</string>
     <string name="dialog_user_name">User Name</string>
     <string name="dialog_password">Password</string>
     <string name="dialog_account_name">Account Name</string>
     <string name="dialog_fields_required">You must enter an account and user name</string>
-    <string name="dialog_login_attempts">Login Attempts Allowed (#)</string>
+    <string name="dialog_login_attempts">Login Attempts</string>
     <string name="dialog_idle_timer">Idle Time (min)</string>
-    <string name="dialog_password_timer">Password Show Time (sec)</string>
+    <string name="dialog_password_timer">Show Password (sec)</string>
+    <string name="dialog_new_un">New User Name</string>
+    <string name="dialog_new_acc_pw">New Account Password</string>
+    <string name="dialog_new_hf_pw">New Hagfish Password</string>
+    <string name="dialog_user_updated">User name updated</string>
+    <string name="dialog_acc_pw_updated">Account password updated</string>
+    <string name="dialog_hf_pw_updated">Hagfish password updated</string>
 
     <!--Warning Strings-->
     <string name="warning_account_exists">Account already exists</string>
     <string name="warning_log_out">If you continue, you will be logged out</string>
-    <string name="warning_idle_out">Hagfish is logging out</string>
+    <string name="warning_delete_account">If you continue, this account will be deleted</string>
+    <string name="warning_burn_vault">If you continue, all accounts will be deleted</string>
+    <string name="warning_idle_out">Hagfish has logged out</string>
     <string name="warning_prefs_changed">Settings have been updated</string>
+
+    <!--About String-->
+    <string name="about_title">Hagfish</string>
+    <string name="about_author">author\t:\tSamuel Brookes (sjb-ch1mp@github)</string>
+    <string name="about_version">version\t:\t1.0</string>
+    <string name="about_date">date\t:\tDec 2019</string>
 
 </resources>
