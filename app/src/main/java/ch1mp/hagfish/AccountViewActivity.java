@@ -209,6 +209,9 @@ public class AccountViewActivity
             case R.id.menu_item_logout:
                 logOut();
                 return true;
+            case R.id.menu_item_change_password:
+                changeHagfishPassword();
+                return true;
             default:
                 return false;
         }
@@ -232,8 +235,7 @@ public class AccountViewActivity
 
     private void generateNewAccountPassword()
     {
-        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.HAGFISH_PASSWORD);
-        df.show(getSupportFragmentManager(), "ChangeFieldDialog_HF_PW");
+        //FIXME: Password Generation
     }
 
     private void deleteAccountWarning()
@@ -264,6 +266,12 @@ public class AccountViewActivity
     {
         DialogFragment df = new AboutHagfishDialog();
         df.show(getSupportFragmentManager(), "AboutHagfishDialog");
+    }
+
+    private void changeHagfishPassword()
+    {
+        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.HAGFISH_PASSWORD);
+        df.show(getSupportFragmentManager(), "ChangeFieldDialog_HF_PW");
     }
 
     @Override
