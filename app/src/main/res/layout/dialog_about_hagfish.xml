@@ -31,6 +31,14 @@
         android:text="@string/about_author" />
 
     <TextView
+        android:id="@+id/about_github"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/geo"
+        android:textSize="18sp"
+        android:text="@string/about_github" />
+
+    <TextView
         android:id="@+id/about_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

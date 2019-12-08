@@ -151,8 +151,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        finish();
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
-        if(memory != null) memory.saveMemory(this);
+        if(memory != null && !memory.isNew())
+            memory.saveMemory(this);
         super.onDestroy();
     }
 }

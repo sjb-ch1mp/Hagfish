@@ -115,8 +115,7 @@ public class Memory implements Serializable {
         }
         catch(Exception e)
         {
-            //Log.d(TAG, e.toString());
-            e.printStackTrace();
+            Log.d(TAG, e.toString());
         }
     }
 
@@ -155,11 +154,9 @@ public class Memory implements Serializable {
     }
 
     //Getters and setters
-    public int getCurrentAttempts(){ return currentAttempts; }
     public int getRemainingAttempts(){ return userPreferences.getMaxAttempts() - currentAttempts; }
     public UserPreferences getUserPreferences(){ return userPreferences; }
     public boolean isNew(){ return encryptedVault == null; }
-    public boolean hasSeed(){ return ivSeed != null; }
     public byte[] getSeed(){ return ivSeed; }
 
 

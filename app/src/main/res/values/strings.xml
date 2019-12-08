@@ -54,8 +54,9 @@
 
     <!--About String-->
     <string name="about_title">Hagfish</string>
-    <string name="about_author">author\t:\tSamuel Brookes (sjb-ch1mp@github)</string>
-    <string name="about_version">version\t:\t1.0</string>
-    <string name="about_date">date\t:\tDec 2019</string>
+    <string name="about_author">author\t\t:\t\tSamuel Brookes</string>
+    <string name="about_github">github\t\t:\t\tsjb-ch1mp</string>
+    <string name="about_version">version\t\t:\t\t1.0</string>
+    <string name="about_date">date\t\t:\t\tDec 2019</string>
 
 </resources>
