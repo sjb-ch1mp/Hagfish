@@ -10,6 +10,7 @@
     <string name="login_wrong_pw">INCORRECT PASSWORD\n{remaining_attempts} ATTEMPTS REMAINING</string>
     <string name="login_first_time">WELCOME TO HAGFISH\nENTER A PASSWORD TO BEGIN</string>
     <string name="login_attempts_exceeded">TOO MANY ATTEMPTS\nALL ACCOUNTS HAVE BEEN DELETED</string>
+    <string name="login_blank_password">PASSWORD CANNOT BE BLANK</string>
 
     <!--AccountViewActivity General-->
     <string name="title_activity_account_viewer">AccountViewerActivity</string>

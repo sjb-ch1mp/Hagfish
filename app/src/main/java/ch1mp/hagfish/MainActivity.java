@@ -100,24 +100,22 @@ public class MainActivity extends AppCompatActivity {
         txtPassword.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER)
+            if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER)
+            {
+                String password = txtPassword.getText().toString();
+                txtPassword.setText("");
+                if(!password.equals(""))
                 {
-                    String password = txtPassword.getText().toString();
-                    txtPassword.setText("");
-                    try
-                    {
-                        PasswordParameters.checkHagFishPassword(password);
-                        runFirstTimeSetUp(password);
-                        openAccountViewer();
-                    }
-                    catch(PasswordException e)
-                    {
-                        System.out.println(e.toString());
-                        labelPassword.setText(e.getMessage());
-                    }
-                    return true;
+                    runFirstTimeSetUp(password);
+                    openAccountViewer();
                 }
-                return false;
+                else
+                {
+                    labelPassword.setText(R.string.login_blank_password);
+                }
+                return true;
+            }
+            return false;
             }
         });
     }

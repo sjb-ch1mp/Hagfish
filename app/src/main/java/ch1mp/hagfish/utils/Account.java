@@ -22,7 +22,7 @@ public class Account implements Serializable {
         this.userName = userName;
         this.password = password;
         datePasswordChanged = new Date();
-        passwordParameters = null;
+        passwordParameters = new PasswordParameters();
     }
 
     //getters
