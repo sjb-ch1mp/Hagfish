@@ -5,20 +5,16 @@
         android:title="@string/toolbar_new_account"
         />
     <item
-        android:id="@+id/menu_settings"
-        android:title="@string/toolbar_settings"
-        />
-    <item
         android:id="@+id/menu_item_delete_vault"
         android:title="@string/toolbar_destroy_vault"
         />
     <item
-        android:id="@+id/menu_item_change_password"
-        android:title="@string/toolbar_change_password"
+        android:id="@+id/menu_settings"
+        android:title="@string/toolbar_settings"
         />
     <item
-        android:id="@+id/menu_item_about"
-        android:title="@string/toolbar_about_hagfish"
+        android:id="@+id/menu_item_change_password"
+        android:title="@string/toolbar_change_password"
         />
     <item
         android:id="@+id/menu_item_logout"

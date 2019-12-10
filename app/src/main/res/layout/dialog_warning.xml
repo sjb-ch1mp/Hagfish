@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/dialog_warning"
-        android:fontFamily="@font/geo"
+        android:fontFamily="@font/anonymous_pro"
         android:textAlignment="center"
         android:textSize="18sp"
         android:paddingTop="20dp"/>

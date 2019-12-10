@@ -41,6 +41,7 @@ public class SettingsDialog extends DialogFragment {
         sbIdle.setProgress((up.getMaxIdle()/60000) - 1);
         sbPassword.setProgress((up.getMaxPasswordShowTime()/1000) - 1);
 
+
         builder.setView(dialogView)
                 .setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
                     @Override

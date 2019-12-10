@@ -23,4 +23,5 @@ public class UserPreferences implements Serializable {
     public int getMaxAttempts(){ return maxAttempts;}
     public int getMaxIdle(){ return maxIdle; }
     public int getMaxPasswordShowTime(){ return maxPasswordShowTime; }
+
 }

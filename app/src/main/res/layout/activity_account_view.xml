@@ -51,9 +51,9 @@
             android:lineSpacingExtra="8sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            app:fontFamily="@font/geo" />
+            app:fontFamily="@font/anonymous_pro" />
 
         <TextView
             android:id="@+id/textUserName"
@@ -63,8 +63,8 @@
             android:textAlignment="center"
             android:textColor="@color/colorPasswordText"
             android:textIsSelectable="false"
-            android:textSize="20sp"
-            app:fontFamily="@font/geo" />
+            android:textSize="18sp"
+            app:fontFamily="@font/anonymous_pro" />
 
         <TextView
             android:id="@+id/textPassword"
@@ -74,21 +74,19 @@
             android:textAlignment="center"
             android:textColor="@color/colorPasswordText"
             android:textIsSelectable="false"
-            android:textSize="20sp"
-            app:fontFamily="@font/geo" />
+            android:textSize="18sp"
+            app:fontFamily="@font/anonymous_pro" />
 
         <TextView
             android:id="@+id/textModified"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="end"
             android:paddingTop="30dp"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
             android:textColor="@color/colorLogo"
             android:textIsSelectable="false"
-            android:textSize="16sp"
-            android:textStyle="italic"
-            app:fontFamily="@font/geo" />
+            android:textSize="14sp"
+            app:fontFamily="@font/anonymous_pro" />
 
     </LinearLayout>
 

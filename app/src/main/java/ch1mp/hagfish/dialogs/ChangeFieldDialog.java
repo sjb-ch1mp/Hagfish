@@ -37,24 +37,31 @@ public class ChangeFieldDialog extends DialogFragment {
 
         switch(field)
         {
+            case ACCOUNT_NAME:
+                editText.setHint(R.string.dialog_new_name);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
             case USER_NAME:
                 editText.setHint(R.string.dialog_new_un);
-                editText.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
                 break;
             case ACCOUNT_PASSWORD:
                 editText.setHint(R.string.dialog_new_acc_pw);
-                editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                //editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 break;
             case HAGFISH_PASSWORD:
                 editText.setHint(R.string.dialog_new_hf_pw);
-                editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                //editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
 
         builder.setView(dialogView)
             .setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    listener.updateField(editText.getText().toString(), field);
+                    if(!editText.getText().toString().equals(""))
+                    {
+                        listener.updateField(editText.getText().toString(), field);
+                    }
                 }
             })
             .setNegativeButton(R.string.dialog_cancel, null);
@@ -81,5 +88,5 @@ public class ChangeFieldDialog extends DialogFragment {
         void updateField(String newValue, Field field);
     }
 
-    public enum Field{ USER_NAME, ACCOUNT_PASSWORD, HAGFISH_PASSWORD }
+    public enum Field{ USER_NAME, ACCOUNT_PASSWORD, HAGFISH_PASSWORD, ACCOUNT_NAME }
 }

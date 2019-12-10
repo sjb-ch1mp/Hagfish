@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class AccountViewActivity
     TextView textUserName;
     TextView textPassword;
     TextView textModified;
+    ImageView imgLogo;
     UserPreferences userPreferences;
     ListView accountList;
     ArrayAdapter<Account> adapter;
@@ -61,10 +63,11 @@ public class AccountViewActivity
         setUpMainToolbar();
         setUpStores();
         setUpLabels();
-        setUpAccountMenu();
         setUpPressListeners();
         setUpListView();
         resetIdleTimer();
+        setUpAccountMenu();
+        setUpAccountButton(vault.size());
     }
 
     /*============
@@ -89,6 +92,14 @@ public class AccountViewActivity
         textUserName = findViewById(R.id.textUserName);
         textPassword = findViewById(R.id.textPassword);
         textModified = findViewById(R.id.textModified);
+
+        imgLogo = findViewById(R.id.imageLogoHeader);
+        imgLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aboutHagfish();
+            }
+        });
     }
 
     private void setUpAccountMenu()
@@ -102,6 +113,9 @@ public class AccountViewActivity
                 resetIdleTimer();
                 switch(menuItem.getItemId())
                 {
+                    case R.id.account_name_change:
+                        changeAccountName();
+                        return true;
                     case R.id.account_un_change:
                         changeUserName();
                         return true;
@@ -119,6 +133,29 @@ public class AccountViewActivity
                 }
             }
         });
+    }
+
+    private void setUpAccountButton(int v)
+    {
+        resetIdleTimer();
+        if(v <= 0)
+        {
+            textAccountName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addNewAccount();
+                }
+            });
+        }
+        else
+        {
+            textAccountName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    accountMenu.show();
+                }
+            });
+        }
     }
 
     private void setUpPressListeners() {
@@ -203,9 +240,6 @@ public class AccountViewActivity
             case R.id.menu_item_delete_vault:
                 deleteAllAccountsWarning();
                 return true;
-            case R.id.menu_item_about:
-                aboutHagfish();
-                return true;
             case R.id.menu_item_logout:
                 logOut();
                 return true;
@@ -274,6 +308,12 @@ public class AccountViewActivity
         df.show(getSupportFragmentManager(), "ChangeFieldDialog_HF_PW");
     }
 
+    private void changeAccountName()
+    {
+        DialogFragment df = new ChangeFieldDialog(ChangeFieldDialog.Field.ACCOUNT_NAME);
+        df.show(getSupportFragmentManager(), "ChangeFieldDialog_Acc_Name");
+    }
+
     @Override
     public void onBackPressed() {
         DialogFragment df = new WarningDialog(WarningDialog.Action.GO_BACK);
@@ -302,15 +342,33 @@ public class AccountViewActivity
     {
         switch(field)
         {
+            case ACCOUNT_NAME:
+                if(!vault.contains(newValue))
+                {
+                    activeAccount.changeAccountName(newValue);
+                    adapter.notifyDataSetChanged();
+                    showAccountDetails();
+                    showToast(R.string.dialog_account_name_changed);
+                }
+                else showToast(R.string.warning_account_exists);
+                break;
             case USER_NAME:
-                activeAccount.changeUserName(newValue);
-                showAccountDetails();
-                showToast(R.string.dialog_user_updated);
+                if(!activeAccount.getUserName().equals(newValue))
+                {
+                    activeAccount.changeUserName(newValue);
+                    showAccountDetails();
+                    showToast(R.string.dialog_user_updated);
+                }
+                else showToast(R.string.warning_un_same);
                 break;
             case ACCOUNT_PASSWORD:
-                activeAccount.changePassword(newValue);
-                showAccountDetails();
-                showToast(R.string.dialog_acc_pw_updated);
+                if(!activeAccount.getPassword().equals(newValue))
+                {
+                    activeAccount.changePassword(newValue);
+                    showAccountDetails();
+                    showToast(R.string.dialog_acc_pw_updated);
+                }
+                else showToast(R.string.warning_pw_same);
                 break;
             case HAGFISH_PASSWORD:
                 crypter.changePassword(newValue);
@@ -320,6 +378,8 @@ public class AccountViewActivity
 
     public void onDialogAddAccount(String accName, String usrName, String pw) //listener
     {
+        int prevVaultSize = vault.size();
+
         if(vault.contains(accName))
         {
             showToast(R.string.warning_account_exists);
@@ -336,6 +396,8 @@ public class AccountViewActivity
             setActiveAccount(account);
             showAccountDetails();
         }
+
+        setUpAccountButton(vault.size());
     }
 
     public void updateSettings(int loginAttempts, int idleTime, int showPWTime) //listener
@@ -356,6 +418,7 @@ public class AccountViewActivity
         activeAccount = null;
         clearAccountDetails();
         textAccountName.setText(R.string.ava_first_time);
+        setUpAccountButton(vault.size());
     }
 
     private void showPassword()
@@ -390,6 +453,7 @@ public class AccountViewActivity
             activeAccount = vault.get(vault.size() - 1);
             showAccountDetails();
         }
+        setUpAccountButton(vault.size());
     }
 
     private void showToast(int resId)

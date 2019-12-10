@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Hagfish</string>
+    <string name="author">Sam Brookes</string>
+    <string name="github">sjb-ch1mp</string>
+    <string name="date">Dec 2019</string>
+    <string name="version">0.1</string>
 
     <!--Log-in Screen Prompts-->
     <string name="login_enter_pw">ENTER YOUR PASSWORD\n{remaining_attempts} ATTEMPTS REMAINING</string>
@@ -15,14 +19,14 @@
     <string name="toolbar_new_account">New Account</string>
     <string name="toolbar_destroy_vault">Burn Vault</string>
     <string name="toolbar_settings">Settings</string>
-    <string name="toolbar_about_hagfish">About</string>
+    <string name="toolbar_change_password">Change Password</string>
     <string name="toolbar_logout">Log Out</string>
-    <string name="toolbar_change_password">Change Hagfish Password</string>
 
     <!--Account Toolbar Options -->
-    <string name="account_change_pw">Change Password</string>
-    <string name="account_change_un">Change User Name</string>
-    <string name="account_gen_new">Generate New</string>
+    <string name="account_name_change">Change Account Name</string>
+    <string name="account_gen_new">Generate New Account Password</string>
+    <string name="account_change_pw">Change Account Password</string>
+    <string name="account_change_un">Change Account User Name</string>
     <string name="account_delete">Delete Account</string>
 
     <!--Dialog Strings-->
@@ -43,6 +47,11 @@
     <string name="dialog_user_updated">User name updated</string>
     <string name="dialog_acc_pw_updated">Account password updated</string>
     <string name="dialog_hf_pw_updated">Hagfish password updated</string>
+    <string name="dialog_hf_pw_same">Passwords are the same</string>
+    <string name="dialog_new_name">New Account Name</string>
+    <string name="dialog_account_name_changed">Account name updated</string>
+    <string name="dialog_account_font">Font</string>
+    <string name="dialog_font_example">EXAMPLE example 1234567890</string>
 
     <!--Warning Strings-->
     <string name="warning_account_exists">Account already exists</string>
@@ -51,12 +60,14 @@
     <string name="warning_burn_vault">If you continue, all accounts will be deleted</string>
     <string name="warning_idle_out">Hagfish has logged out</string>
     <string name="warning_prefs_changed">Settings have been updated</string>
+    <string name="warning_un_same">User names are the same</string>
+    <string name="warning_pw_same">Passwords are the same</string>
 
     <!--About String-->
     <string name="about_title">Hagfish</string>
-    <string name="about_author">author\t\t:\t\tSamuel Brookes</string>
-    <string name="about_github">github\t\t:\t\tsjb-ch1mp</string>
-    <string name="about_version">version\t\t:\t\t1.0</string>
-    <string name="about_date">date\t\t:\t\tDec 2019</string>
+    <string name="about_author">author</string>
+    <string name="about_github">github</string>
+    <string name="about_version">version</string>
+    <string name="about_date">date</string>
 
 </resources>

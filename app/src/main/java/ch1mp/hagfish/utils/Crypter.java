@@ -119,9 +119,14 @@ public class Crypter {
         }
     }
 
-    public void changePassword(String password)
+    public boolean changePassword(String password)
     {
-        key = new CrypterKey(hashPassword(password), generateIvSeed());
+        if(!key.getPassword().equals(hashPassword(password)))
+        {
+            key = new CrypterKey(hashPassword(password), generateIvSeed());
+            return true;
+        }
+        return false;
     }
 
     public CrypterKey getKey()

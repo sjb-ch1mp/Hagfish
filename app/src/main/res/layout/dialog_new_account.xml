@@ -10,7 +10,7 @@
         android:id="@+id/new_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/geo"
+        android:fontFamily="@font/anonymous_pro"
         android:hint="@string/dialog_account_name"
         android:inputType="text" />
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/dialog_user_name"
-        android:fontFamily="@font/geo"
+        android:fontFamily="@font/anonymous_pro"
         android:inputType="text|textEmailAddress" />
 
     <EditText
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/dialog_password"
-        android:fontFamily="@font/geo"
+        android:fontFamily="@font/anonymous_pro"
         android:inputType="textPassword" />
 
 </LinearLayout>

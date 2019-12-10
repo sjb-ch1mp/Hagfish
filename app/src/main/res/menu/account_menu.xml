@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/account_name_change"
+        android:title="@string/account_name_change"
+        />
     <item
         android:id="@+id/account_un_change"
         android:title="@string/account_change_un"
