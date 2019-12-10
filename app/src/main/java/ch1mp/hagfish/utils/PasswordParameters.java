@@ -1,10 +1,13 @@
 package ch1mp.hagfish.utils;
 
+import java.io.Serializable;
+
 /**
  * The PasswordParameters class
  */
-public class PasswordParameters {
+public class PasswordParameters implements Serializable {
 
+    private static final long serialVersionUID = 1986L;
     private int length;
     private boolean lowerCase;
     private boolean upperCase;
