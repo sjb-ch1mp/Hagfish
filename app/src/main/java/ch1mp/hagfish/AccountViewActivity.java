@@ -55,6 +55,7 @@ public class AccountViewActivity
     ListView accountList;
     ArrayAdapter<Account> adapter;
     CountDownTimer idleTimer;
+    boolean saved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class AccountViewActivity
         resetIdleTimer();
         setUpAccountMenu();
         setUpAccountButton(vault.size());
+        saved = false;
     }
 
     /*============
@@ -467,7 +469,8 @@ public class AccountViewActivity
 
         idleTimer.cancel();
 
-        Memory.saveMemory(this, vault, crypter, userPreferences);
+        if(!saved)
+            saved = Memory.saveMemory(this, vault, crypter.scramble(), userPreferences);
 
         Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
         startActivity(intent);
@@ -517,11 +520,15 @@ public class AccountViewActivity
 
     private String hidePassword()
     {
-        String hiddenPassword = "";
-        for(char c : activeAccount.getPassword().toCharArray())
-        {
-            hiddenPassword += "*";
-        }
-        return hiddenPassword;
+        StringBuilder hiddenPassword = new StringBuilder();
+        while(hiddenPassword.length() < activeAccount.getPassword().length()) hiddenPassword.append("*");
+        return hiddenPassword.toString();
+    }
+
+    @Override
+    protected void onPause() {
+        if(!saved)
+            saved = Memory.saveMemory(this, vault, crypter.scramble(), userPreferences);
+        super.onPause();
     }
 }

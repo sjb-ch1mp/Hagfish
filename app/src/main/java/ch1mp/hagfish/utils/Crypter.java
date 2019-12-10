@@ -45,6 +45,12 @@ public class Crypter {
         this.key = new CrypterKey(hashPassword(password), seed);
     }
 
+    public Crypter scramble()
+    {
+        key.setSeed(generateIvSeed());
+        return this;
+    }
+
     public Vault decryptVault(byte[] encryptedVault)
     {
         try

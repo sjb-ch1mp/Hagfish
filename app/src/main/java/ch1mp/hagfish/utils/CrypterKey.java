@@ -37,4 +37,6 @@ public class CrypterKey implements Serializable {
     {
         return seed;
     }
+
+    void setSeed(byte[] seed){ this.seed = seed; }
 }
