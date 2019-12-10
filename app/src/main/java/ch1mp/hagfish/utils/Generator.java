@@ -11,7 +11,12 @@ public class Generator {
 
     private PasswordParameters passwordParameters;
 
-    public Generator() {
+    public Generator(PasswordParameters passwordParameters) {
+        this.passwordParameters = passwordParameters;
+    }
+
+    public Generator()
+    {
         passwordParameters = new PasswordParameters();
     }
 
@@ -86,17 +91,17 @@ public class Generator {
 
     private Character[] getExtendedSpecialCharacters()
     {
-        int len = (47 - 33)
-                + (64 - 58)
-                + (96 - 91)
-                + (126 - 123);
+        int len = (48 - 33)
+                + (65 - 58)
+                + (97 - 91)
+                + (127 - 123);
         int idx = 0;
         Character[] esc = new Character[len];
 
         for(int i=33; i<48; i++) esc[idx++] = (char) i;
         for(int i=58; i<65; i++) esc[idx++] = (char) i;
         for(int i=91; i<97; i++) esc[idx++] = (char) i;
-        for(int i=123; i<126; i++) esc[idx++] = (char) i;
+        for(int i=123; i<127; i++) esc[idx++] = (char) i;
 
         return esc;
     }

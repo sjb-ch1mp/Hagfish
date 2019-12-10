@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import ch1mp.hagfish.dialogs.AboutHagfishDialog;
 import ch1mp.hagfish.dialogs.ChangeFieldDialog;
 import ch1mp.hagfish.dialogs.NewAccountDialog;
+import ch1mp.hagfish.dialogs.PasswordParametersDialog;
 import ch1mp.hagfish.dialogs.SettingsDialog;
 import ch1mp.hagfish.dialogs.WarningDialog;
 import ch1mp.hagfish.utils.Account;
@@ -31,6 +32,7 @@ import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.CrypterKey;
 import ch1mp.hagfish.utils.Generator;
 import ch1mp.hagfish.utils.Memory;
+import ch1mp.hagfish.utils.PasswordParameters;
 import ch1mp.hagfish.utils.UserPreferences;
 import ch1mp.hagfish.utils.Vault;
 
@@ -39,7 +41,8 @@ public class AccountViewActivity
         implements NewAccountDialog.DialogListener,
         SettingsDialog.DialogListener,
         WarningDialog.DialogListener,
-        ChangeFieldDialog.DialogListener {
+        ChangeFieldDialog.DialogListener,
+        PasswordParametersDialog.DialogListener {
 
     Vault vault;
     Crypter crypter;
@@ -126,6 +129,9 @@ public class AccountViewActivity
                         return true;
                     case R.id.account_pw_generate:
                         generateNewAccountPassword();
+                        return true;
+                    case R.id.account_pw_params:
+                        getPasswordParameters();
                         return true;
                     case R.id.account_delete:
                         deleteAccountWarning();
@@ -269,9 +275,10 @@ public class AccountViewActivity
         df.show(getSupportFragmentManager(), "ChangeFieldDialog_Acc_PW");
     }
 
-    private void generateNewAccountPassword()
+    private void getPasswordParameters()
     {
-        //FIXME: Password Generation
+        DialogFragment df = new PasswordParametersDialog(activeAccount.getPasswordParameters());
+        df.show(getSupportFragmentManager(), "PasswordParametersDialog");
     }
 
     private void deleteAccountWarning()
@@ -410,9 +417,29 @@ public class AccountViewActivity
         showToast(R.string.warning_prefs_changed);
     }
 
+    public void updateParameters(int length, boolean lc, boolean uc, boolean num, boolean esc, String lsc)
+    {
+        if(!lc && !uc && !num && !esc && lsc.equals(""))
+        {
+            showToast(R.string.warning_params_all_false);
+        }
+        else
+        {
+            activeAccount.setPasswordParameters(new PasswordParameters(length, lc, uc, num, esc, lsc));
+            showToast(R.string.warning_params_updated);
+        }
+    }
+
     /*============
      * UTIL METHODS
      * ============*/
+    private void generateNewAccountPassword()
+    {
+        activeAccount.changePassword(new Generator(activeAccount.getPasswordParameters()).generatePassword());
+        showToast(R.string.dialog_acc_pw_updated);
+        showPassword();
+    }
+
     private void burnVault()
     {
         vault.clear();
