@@ -54,4 +54,19 @@ public class Vault extends ArrayList<Account> implements Serializable {
         vault.addAll(accountList);
         return vault;
     }
+
+    public void alphabetize()
+    {
+        for(int i=0; i<this.size(); i++){
+            for(int j=i; j<this.size(); j++){
+                if(this.get(i).getAccountName().compareTo(this.get(j).getAccountName()) > 0){
+                    Account hold = this.get(i);
+                    this.set(i, this.get(j));
+                    this.set(j, hold);
+                }
+            }
+        }
+    }
+
+
 }

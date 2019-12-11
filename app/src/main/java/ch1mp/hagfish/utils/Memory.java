@@ -86,6 +86,7 @@ public class Memory implements Serializable {
     {
         Memory memory = new Memory(userPreferences);
         memory.ivSeed = crypter.getKey().getSeed();
+        vault.alphabetize();
 
         try
         {

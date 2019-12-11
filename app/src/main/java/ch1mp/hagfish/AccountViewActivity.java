@@ -71,7 +71,7 @@ public class AccountViewActivity
         setUpListView();
         resetIdleTimer();
         setUpAccountMenu();
-        setUpAccountButton(vault.size());
+        toggleAccountButton(vault.size());
         saved = false;
     }
 
@@ -143,7 +143,7 @@ public class AccountViewActivity
         });
     }
 
-    private void setUpAccountButton(int v)
+    private void toggleAccountButton(int v)
     {
         resetIdleTimer();
         if(v <= 0)
@@ -355,6 +355,7 @@ public class AccountViewActivity
                 if(!vault.contains(newValue))
                 {
                     activeAccount.changeAccountName(newValue);
+                    vault.alphabetize();
                     adapter.notifyDataSetChanged();
                     showAccountDetails();
                     showToast(R.string.dialog_account_name_changed);
@@ -387,8 +388,6 @@ public class AccountViewActivity
 
     public void onDialogAddAccount(String accName, String usrName, String pw) //listener
     {
-        int prevVaultSize = vault.size();
-
         if(vault.contains(accName))
         {
             showToast(R.string.warning_account_exists);
@@ -401,12 +400,12 @@ public class AccountViewActivity
                     (pw.equals(""))?new Generator().generatePassword():pw
             );
             vault.add(account);
+            vault.alphabetize();
             adapter.notifyDataSetChanged();
             setActiveAccount(account);
             showAccountDetails();
         }
-
-        setUpAccountButton(vault.size());
+        toggleAccountButton(vault.size());
     }
 
     public void updateSettings(int loginAttempts, int idleTime, int showPWTime) //listener
@@ -447,7 +446,7 @@ public class AccountViewActivity
         activeAccount = null;
         clearAccountDetails();
         textAccountName.setText(R.string.ava_first_time);
-        setUpAccountButton(vault.size());
+        toggleAccountButton(vault.size());
     }
 
     private void showPassword()
@@ -482,7 +481,7 @@ public class AccountViewActivity
             activeAccount = vault.get(vault.size() - 1);
             showAccountDetails();
         }
-        setUpAccountButton(vault.size());
+        toggleAccountButton(vault.size());
     }
 
     private void showToast(int resId)
