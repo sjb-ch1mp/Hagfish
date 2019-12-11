@@ -17,6 +17,10 @@
         android:title="@string/account_gen_new"
         />
     <item
+        android:id="@+id/account_undo"
+        android:title="@string/account_pw_undo"
+        />
+    <item
         android:id="@+id/account_pw_params"
         android:title="@string/account_pw_params"
         />

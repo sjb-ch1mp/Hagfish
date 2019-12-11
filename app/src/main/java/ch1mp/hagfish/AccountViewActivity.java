@@ -26,6 +26,7 @@ import ch1mp.hagfish.dialogs.NewAccountDialog;
 import ch1mp.hagfish.dialogs.PasswordParametersDialog;
 import ch1mp.hagfish.dialogs.SettingsDialog;
 import ch1mp.hagfish.dialogs.WarningDialog;
+import ch1mp.hagfish.exceptions.PasswordException;
 import ch1mp.hagfish.utils.Account;
 import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
@@ -135,6 +136,9 @@ public class AccountViewActivity
                         return true;
                     case R.id.account_delete:
                         deleteAccountWarning();
+                        return true;
+                    case R.id.account_undo:
+                        undoChangePassword();
                         return true;
                     default:
                         return false;
@@ -323,6 +327,12 @@ public class AccountViewActivity
         df.show(getSupportFragmentManager(), "ChangeFieldDialog_Acc_Name");
     }
 
+    private void undoChangePassword()
+    {
+        DialogFragment df = new WarningDialog(WarningDialog.Action.UNDO_CHANGE_PASSWORD);
+        df.show(getSupportFragmentManager(), "WarningDialog_Undo_Change_PW");
+    }
+
     @Override
     public void onBackPressed() {
         DialogFragment df = new WarningDialog(WarningDialog.Action.GO_BACK);
@@ -344,6 +354,16 @@ public class AccountViewActivity
                 break;
             case BURN_VAULT:
                 burnVault();
+                break;
+            case UNDO_CHANGE_PASSWORD:
+                try
+                {
+                    activeAccount.restorePreviousPassword();
+                }
+                catch(PasswordException e)
+                {
+                    showToast(e.toString());
+                }
         }
     }
 
@@ -487,6 +507,11 @@ public class AccountViewActivity
     private void showToast(int resId)
     {
         Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
+    private void showToast(String message)
+    {
+        Toast.makeText(AccountViewActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void logOut()

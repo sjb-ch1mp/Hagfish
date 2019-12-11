@@ -44,6 +44,9 @@ public class WarningDialog extends DialogFragment {
                 break;
             case BURN_VAULT:
                 textWarning.setText(R.string.warning_burn_vault);
+                break;
+            case UNDO_CHANGE_PASSWORD:
+                textWarning.setText(R.string.warning_undo_change);
         }
 
         builder.setView(dialogView)
@@ -77,5 +80,5 @@ public class WarningDialog extends DialogFragment {
         void doAction(Action action);
     }
 
-    public enum Action { GO_BACK, DELETE_ACCOUNT, BURN_VAULT }
+    public enum Action { GO_BACK, DELETE_ACCOUNT, BURN_VAULT, UNDO_CHANGE_PASSWORD }
 }

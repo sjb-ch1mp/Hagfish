@@ -30,6 +30,7 @@
     <string name="account_change_un">Change Account User Name</string>
     <string name="account_delete">Delete Account</string>
     <string name="account_pw_params">Set Password Parameters</string>
+    <string name="account_pw_undo">Undo Change Password</string>
 
     <!--Dialog Strings-->
     <string name="dialog_new_account">New Account</string>
@@ -60,6 +61,7 @@
     <string name="dialog_params_num">Numbers</string>
     <string name="dialog_params_esc">Special Characters</string>
     <string name="dialog_params_lsc">Specify Characters</string>
+    <string name="dialog_delete_on_failure">Delete accounts on login failure</string>
 
     <!--Warning Strings-->
     <string name="warning_account_exists">Account already exists</string>
@@ -72,6 +74,7 @@
     <string name="warning_pw_same">Passwords are the same</string>
     <string name="warning_params_all_false">Password parameters must contain at least one character set</string>
     <string name="warning_params_updated">Password parameters have been updated</string>
+    <string name="warning_undo_change">If you continue, the previous password will be restored</string>
 
     <!--About String-->
     <string name="about_title">Hagfish</string>

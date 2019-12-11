@@ -57,7 +57,7 @@ public class Account implements Serializable{
         this.passwordParameters = passwordParameters;
     }
 
-    public void revert() throws PasswordException
+    public void restorePreviousPassword() throws PasswordException
     {
         if(previousPassword != null)
         {
