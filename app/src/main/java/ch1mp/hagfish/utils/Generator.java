@@ -3,6 +3,8 @@ package ch1mp.hagfish.utils;
 import java.util.ArrayList;
 import java.util.Random;
 
+import ch1mp.hagfish.store.PasswordParameters;
+
 /**
  * The Generator class generates passwords.
  * It takes parameters that characterise the password (e.g. length, legal characters, etc.)

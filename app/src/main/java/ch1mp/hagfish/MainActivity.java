@@ -9,11 +9,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import ch1mp.hagfish.exceptions.PasswordException;
 import ch1mp.hagfish.utils.Crypter;
-import ch1mp.hagfish.utils.Memory;
-import ch1mp.hagfish.utils.PasswordParameters;
-import ch1mp.hagfish.utils.Vault;
+import ch1mp.hagfish.store.Memory;
+import ch1mp.hagfish.store.Vault;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,9 +1,7 @@
-package ch1mp.hagfish.utils;
+package ch1mp.hagfish.store;
 
 import android.content.Context;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import ch1mp.hagfish.utils.Crypter;
 
 /**
  * The Memory class holds an encrypted vault and tracks how many attempts have been made

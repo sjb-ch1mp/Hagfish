@@ -2,8 +2,8 @@ package ch1mp.hagfish;
 
 import java.util.Iterator;
 
-import ch1mp.hagfish.utils.Account;
-import ch1mp.hagfish.utils.Vault;
+import ch1mp.hagfish.store.Account;
+import ch1mp.hagfish.store.Vault;
 
 public class TestUtilities {
 

@@ -1,7 +1,6 @@
-package ch1mp.hagfish.utils;
+package ch1mp.hagfish.store;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
 
 import ch1mp.hagfish.exceptions.PasswordException;
@@ -31,32 +30,25 @@ public class Account implements Serializable{
 
     //getters
     public String getAccountName(){ return accountName; }
-
     public String getUserName(){ return userName; }
-
     public String getPassword(){ return password; }
-
     public String getDatePasswordChanged(){ return datePasswordChanged.toString(); }
-
     public PasswordParameters getPasswordParameters(){ return passwordParameters; }
+    public boolean hasPreviousPassword(){ return previousPassword != null; }
 
     //setters - whenever the password is changed, update the datePasswordChanged field
     public void changeAccountName(String accountName){ this.accountName = accountName; }
-
     public void changeUserName(String userName){ this.userName = userName; }
-
     public void changePassword(String password)
     {
         previousPassword = this.password;
         this.password = password;
         datePasswordChanged = new Date();
     }
-
     public void setPasswordParameters(PasswordParameters passwordParameters)
     {
         this.passwordParameters = passwordParameters;
     }
-
     public void restorePreviousPassword() throws PasswordException
     {
         if(previousPassword != null)

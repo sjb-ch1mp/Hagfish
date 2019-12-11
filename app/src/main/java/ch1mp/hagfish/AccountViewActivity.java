@@ -27,15 +27,15 @@ import ch1mp.hagfish.dialogs.PasswordParametersDialog;
 import ch1mp.hagfish.dialogs.SettingsDialog;
 import ch1mp.hagfish.dialogs.WarningDialog;
 import ch1mp.hagfish.exceptions.PasswordException;
-import ch1mp.hagfish.utils.Account;
+import ch1mp.hagfish.store.Account;
 import ch1mp.hagfish.utils.AccountAdapter;
 import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.utils.CrypterKey;
 import ch1mp.hagfish.utils.Generator;
-import ch1mp.hagfish.utils.Memory;
-import ch1mp.hagfish.utils.PasswordParameters;
-import ch1mp.hagfish.utils.UserPreferences;
-import ch1mp.hagfish.utils.Vault;
+import ch1mp.hagfish.store.Memory;
+import ch1mp.hagfish.store.PasswordParameters;
+import ch1mp.hagfish.store.UserPreferences;
+import ch1mp.hagfish.store.Vault;
 
 public class AccountViewActivity
         extends AppCompatActivity
@@ -329,8 +329,12 @@ public class AccountViewActivity
 
     private void undoChangePassword()
     {
-        DialogFragment df = new WarningDialog(WarningDialog.Action.UNDO_CHANGE_PASSWORD);
-        df.show(getSupportFragmentManager(), "WarningDialog_Undo_Change_PW");
+        if(activeAccount.hasPreviousPassword())
+        {
+            DialogFragment df = new WarningDialog(WarningDialog.Action.UNDO_CHANGE_PASSWORD);
+            df.show(getSupportFragmentManager(), "WarningDialog_Undo_Change_PW");
+        }
+        else showShortToast(R.string.warning_no_prev_pw);
     }
 
     @Override
@@ -359,10 +363,12 @@ public class AccountViewActivity
                 try
                 {
                     activeAccount.restorePreviousPassword();
+                    showAccountDetails();
+                    showShortToast(R.string.warning_pw_restored);
                 }
                 catch(PasswordException e)
                 {
-                    showToast(e.toString());
+                    showShortToast(e.toString());
                 }
         }
     }
@@ -378,31 +384,31 @@ public class AccountViewActivity
                     vault.alphabetize();
                     adapter.notifyDataSetChanged();
                     showAccountDetails();
-                    showToast(R.string.dialog_account_name_changed);
+                    showShortToast(R.string.dialog_account_name_changed);
                 }
-                else showToast(R.string.warning_account_exists);
+                else showShortToast(R.string.warning_account_exists);
                 break;
             case USER_NAME:
                 if(!activeAccount.getUserName().equals(newValue))
                 {
                     activeAccount.changeUserName(newValue);
                     showAccountDetails();
-                    showToast(R.string.dialog_user_updated);
+                    showShortToast(R.string.dialog_user_updated);
                 }
-                else showToast(R.string.warning_un_same);
+                else showShortToast(R.string.warning_un_same);
                 break;
             case ACCOUNT_PASSWORD:
                 if(!activeAccount.getPassword().equals(newValue))
                 {
                     activeAccount.changePassword(newValue);
                     showAccountDetails();
-                    showToast(R.string.dialog_acc_pw_updated);
+                    showShortToast(R.string.dialog_acc_pw_updated);
                 }
-                else showToast(R.string.warning_pw_same);
+                else showShortToast(R.string.warning_pw_same);
                 break;
             case HAGFISH_PASSWORD:
                 crypter.changePassword(newValue);
-                showToast(R.string.dialog_hf_pw_updated);
+                showShortToast(R.string.dialog_hf_pw_updated);
         }
     }
 
@@ -410,7 +416,7 @@ public class AccountViewActivity
     {
         if(vault.contains(accName))
         {
-            showToast(R.string.warning_account_exists);
+            showShortToast(R.string.warning_account_exists);
         }
         else
         {
@@ -433,19 +439,19 @@ public class AccountViewActivity
         userPreferences.setMaxAttempts(loginAttempts);
         userPreferences.setMaxIdle(idleTime * 60000);
         userPreferences.setMaxPasswordShowTime(showPWTime * 1000);
-        showToast(R.string.warning_prefs_changed);
+        showShortToast(R.string.warning_prefs_changed);
     }
 
     public void updateParameters(int length, boolean lc, boolean uc, boolean num, boolean esc, String lsc)
     {
         if(!lc && !uc && !num && !esc && lsc.equals(""))
         {
-            showToast(R.string.warning_params_all_false);
+            showShortToast(R.string.warning_params_all_false);
         }
         else
         {
             activeAccount.setPasswordParameters(new PasswordParameters(length, lc, uc, num, esc, lsc));
-            showToast(R.string.warning_params_updated);
+            showShortToast(R.string.warning_params_updated);
         }
     }
 
@@ -455,7 +461,7 @@ public class AccountViewActivity
     private void generateNewAccountPassword()
     {
         activeAccount.changePassword(new Generator(activeAccount.getPasswordParameters()).generatePassword());
-        showToast(R.string.dialog_acc_pw_updated);
+        showShortToast(R.string.dialog_acc_pw_updated);
         showPassword();
     }
 
@@ -504,19 +510,24 @@ public class AccountViewActivity
         toggleAccountButton(vault.size());
     }
 
-    private void showToast(int resId)
+    private void showShortToast(int resId)
     {
         Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_SHORT).show();
     }
 
-    private void showToast(String message)
+    private void showShortToast(String message)
     {
         Toast.makeText(AccountViewActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void showLongToast(int resId)
+    {
+        Toast.makeText(AccountViewActivity.this, getString(resId), Toast.LENGTH_LONG).show();
+    }
+
     public void logOut()
     {
-        showToast(R.string.warning_idle_out);
+        showShortToast(R.string.warning_idle_out);
 
         idleTimer.cancel();
 

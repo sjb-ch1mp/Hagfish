@@ -1,4 +1,4 @@
-package ch1mp.hagfish.utils;
+package ch1mp.hagfish.store;
 
 import java.io.Serializable;
 
@@ -9,11 +9,11 @@ public class UserPreferences implements Serializable {
     private int maxIdle;
     private int maxPasswordShowTime;
 
-    public UserPreferences()
+    UserPreferences()
     {
         maxAttempts = 3;
-        maxIdle = 60000; //milliseconds
-        maxPasswordShowTime = 1000; //milliseconds
+        maxIdle = 60000; //milliseconds (1 min)
+        maxPasswordShowTime = 1000; //milliseconds (1 sec)
     }
 
     public void setMaxAttempts(int maxAttempts){ this.maxAttempts = maxAttempts; }

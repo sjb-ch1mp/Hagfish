@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import ch1mp.hagfish.utils.Account;
+import ch1mp.hagfish.store.Account;
 import ch1mp.hagfish.utils.Crypter;
-import ch1mp.hagfish.utils.Vault;
+import ch1mp.hagfish.store.Vault;
 
 public class CrypterTest {
 

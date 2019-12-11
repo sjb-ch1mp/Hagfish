@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import ch1mp.hagfish.AccountViewActivity;
 import ch1mp.hagfish.R;
+import ch1mp.hagfish.store.Account;
 
 public class AccountAdapter extends ArrayAdapter<Account> {
 

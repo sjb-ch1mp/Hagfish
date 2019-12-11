@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
-import ch1mp.hagfish.utils.UserPreferences;
+import ch1mp.hagfish.store.UserPreferences;
 
 public class SettingsDialog extends DialogFragment {
 
@@ -40,7 +40,6 @@ public class SettingsDialog extends DialogFragment {
         sbLogin.setProgress(up.getMaxAttempts() - 1);
         sbIdle.setProgress((up.getMaxIdle()/60000) - 1);
         sbPassword.setProgress((up.getMaxPasswordShowTime()/1000) - 1);
-
 
         builder.setView(dialogView)
                 .setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {

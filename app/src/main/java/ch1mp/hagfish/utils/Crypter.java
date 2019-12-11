@@ -12,6 +12,8 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+import ch1mp.hagfish.store.Vault;
+
 public class Crypter {
 
     private static final String TAG = "Crypter";

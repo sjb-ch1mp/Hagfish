@@ -8,8 +8,8 @@ import java.io.File;
 import static org.junit.Assert.*;
 
 import ch1mp.hagfish.utils.Crypter;
-import ch1mp.hagfish.utils.Memory;
-import ch1mp.hagfish.utils.Vault;
+import ch1mp.hagfish.store.Memory;
+import ch1mp.hagfish.store.Vault;
 
 public class MemoryTest {
 

@@ -1,4 +1,4 @@
-package ch1mp.hagfish.utils;
+package ch1mp.hagfish.store;
 
 import java.io.Serializable;
 import java.util.ArrayList;

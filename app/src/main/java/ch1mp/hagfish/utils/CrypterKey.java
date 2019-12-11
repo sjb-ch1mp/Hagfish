@@ -12,28 +12,28 @@ public class CrypterKey implements Serializable {
     private byte[] password;
     private byte[] seed;
 
-    public CrypterKey(byte[] password, byte[] seed)
+    CrypterKey(byte[] password, byte[] seed)
     {
         this.password = password;
         this.seed = seed;
     }
 
-    public SecretKey getKey()
+    SecretKey getKey()
     {
         return new SecretKeySpec(password, "AES");
     }
 
-    public IvParameterSpec getIV()
+    IvParameterSpec getIV()
     {
         return new IvParameterSpec(seed);
     }
 
-    byte[] getPassword()
+    public byte[] getPassword()
     {
         return password;
     }
 
-    byte[] getSeed()
+    public byte[] getSeed()
     {
         return seed;
     }

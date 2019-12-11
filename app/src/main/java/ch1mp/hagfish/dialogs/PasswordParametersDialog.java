@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
-import ch1mp.hagfish.utils.PasswordParameters;
+import ch1mp.hagfish.store.PasswordParameters;
 
 public class PasswordParametersDialog extends DialogFragment {
 
