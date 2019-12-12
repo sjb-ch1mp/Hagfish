@@ -14,6 +14,11 @@ import javax.crypto.NoSuchPaddingException;
 
 import ch1mp.hagfish.store.Vault;
 
+/**
+ * The Crypter class encrypts and decrypts the Vault using AES encryption.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ */
 public class Crypter {
 
     private static final String TAG = "Crypter";
@@ -21,7 +26,7 @@ public class Crypter {
 
     /**
      * Invoked when a fresh instance of Hagfish is being made
-     * @param password
+     * @param password - the password entered by the user
      */
     public Crypter(String password)
     {
@@ -30,7 +35,7 @@ public class Crypter {
 
     /**
      * Invoked after passing key from MainActivity to AccountViewActivity
-     * @param key
+     * @param key - the key passed from MainActivity
      */
     public Crypter(CrypterKey key)
     {
@@ -39,20 +44,36 @@ public class Crypter {
 
     /**
      * Invoked when attempting to decrypt the vault
-     * @param password
-     * @param seed
+     * @param password - the password entered by the current user
+     * @param seed - the IV saved from the previous encryption
      */
     public Crypter(String password, byte[] seed)
     {
         this.key = new CrypterKey(hashPassword(password), seed);
     }
 
+    /**
+     * Generates a new IV seed. Called whenever a Memory is saved to ensure
+     * that a different IV is used each time the vault is encrypted.
+     *
+     * @return - A Crypter with a new IV seed.
+     */
     public Crypter scramble()
     {
         key.setSeed(generateIvSeed());
         return this;
     }
 
+    /**
+     * Attempts to decrypt the vault with the password provided by the user.
+     * This is done by decrypting the byte[] array and reading a Vault object
+     * from it.
+     *
+     * If the password is correct - a decrypted vault is returned.
+     * If the password is incorrect - null is returned.
+     * @param encryptedVault - the encrypted vault from the mem.dat file
+     * @return - Vault (decrypted vault), or null (if wrong password)
+     */
     public Vault decryptVault(byte[] encryptedVault)
     {
         try
@@ -71,6 +92,13 @@ public class Crypter {
         }
     }
 
+    /**
+     * Attempts the encrypt the Vault. This is done by writing the Vault to a byte[]
+     * array and then encrypting the byte[] array using AES encryption.
+     *
+     * @param vault - the Vault to be encrypted
+     * @return - byte[] array (encrypted vault)
+     */
     public byte[] encryptVault(Vault vault)
     {
         try
@@ -90,6 +118,12 @@ public class Crypter {
         }
     }
 
+    /**
+     * Generates a randomized byte[] array with the necessary length for an AES block.
+     * This is used to create an Initialization Vector.
+     *
+     * @return - byte[] array with randomized content
+     */
     private byte[] generateIvSeed()
     {
         try
@@ -112,6 +146,13 @@ public class Crypter {
         }
     }
 
+    /**
+     * Creates a SHA-256 hash of the user's password to ensure that
+     * it is always the correct length for encryption/decryption.
+     *
+     * @param password - the user's password
+     * @return - byte[] array (SHA-256 hash)
+     */
     private byte[] hashPassword(String password)
     {
         try
@@ -127,6 +168,13 @@ public class Crypter {
         }
     }
 
+    /**
+     * Saves a new password and generates a new IV seed for the
+     * current CypterKey.
+     *
+     * @param password - the user's password
+     * @return - true if the password is different to the currently saved one
+     */
     public boolean changePassword(String password)
     {
         if(!key.getPassword().equals(hashPassword(password)))
@@ -137,6 +185,9 @@ public class Crypter {
         return false;
     }
 
+    /*==============
+    * Setter Methods
+    * ==============*/
     public CrypterKey getKey()
     {
         return key;

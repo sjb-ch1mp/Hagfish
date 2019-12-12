@@ -15,6 +15,15 @@ import ch1mp.hagfish.AccountViewActivity;
 import ch1mp.hagfish.R;
 import ch1mp.hagfish.store.Account;
 
+/**
+ * The Adapter for the ListView in AccountViewActivity.
+ * Whenever an account from the list is selected:
+ *  1. the idle timer is reset
+ *  2. the account is made 'active'
+ *  3. the labels are populated with its details.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ */
 public class AccountAdapter extends ArrayAdapter<Account> {
 
     Context context;

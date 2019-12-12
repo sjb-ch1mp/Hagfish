@@ -16,6 +16,13 @@ import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
 
+/**
+ *
+ * Dialog Fragment for adding a new account to Hagfish.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class NewAccountDialog extends DialogFragment {
 
     private DialogListener listener;
@@ -54,20 +61,20 @@ public class NewAccountDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Attach AccountViewActivity as a DialogListener
+     *
+     * @param context - AccountViewActivity
+     */
     @Override
     public void onAttach(Context context) {
+        listener = (DialogListener) context;
         super.onAttach(context);
-
-        try
-        {
-            listener = (DialogListener) context;
-        }
-        catch(ClassCastException e)
-        {
-            e.printStackTrace();
-        }
     }
 
+    /**
+     * Interface for passing the new account information to AccountViewActivity
+     */
     public interface DialogListener {
         void onDialogAddAccount(String accountName, String userName, String password);
     }

@@ -16,11 +16,23 @@ import androidx.fragment.app.DialogFragment;
 import ch1mp.hagfish.R;
 import ch1mp.hagfish.store.UserPreferences;
 
+/**
+ *
+ * Dialog Fragment for changing the settings of Hagfish.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class SettingsDialog extends DialogFragment {
 
     private DialogListener listener;
     private UserPreferences up;
 
+    /**
+     * The constructor requires the current UserPreferences in order to build
+     * the dialog correctly.
+     * @param up - The current UserPreferences for Hagfish
+     */
     public SettingsDialog(UserPreferences up)
     {
         this.up = up;
@@ -37,6 +49,9 @@ public class SettingsDialog extends DialogFragment {
         final SeekBar sbIdle = dialogView.findViewById(R.id.seekBar_idle_timer);
         final SeekBar sbPassword = dialogView.findViewById(R.id.seekBar_password_timer);
 
+        /*
+        * Set up the dialog to reflect the current settings
+        * */
         sbLogin.setProgress(up.getMaxAttempts() - 1);
         sbIdle.setProgress((up.getMaxIdle()/60000) - 1);
         sbPassword.setProgress((up.getMaxPasswordShowTime()/1000) - 1);
@@ -54,19 +69,20 @@ public class SettingsDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Attach the AccountViewActivity as a DialogListener
+     * @param context - AccountViewActivity
+     */
     @Override
     public void onAttach(Context context) {
-        try
-        {
-            listener = (DialogListener) context;
-        }
-        catch(ClassCastException e)
-        {
-            e.printStackTrace();
-        }
+        listener = (DialogListener) context;
         super.onAttach(context);
     }
 
+    /**
+     * The interface that contains the method by which the new settings are
+     * passed to the AccountViewActivity
+     */
     public interface DialogListener
     {
         void updateSettings(int loginAttempts, int idleTime, int showPWTime);

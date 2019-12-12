@@ -14,9 +14,11 @@ import ch1mp.hagfish.utils.Crypter;
 
 /**
  * The Memory class holds an encrypted vault and tracks how many attempts have been made
- * to decrypt it.
+ * to decrypt it. Constructors are private to ensure that only a single Memory exists at a time
+ * (Singleton pattern).
  *
  * @author Samuel Brookes (sjb-ch1mp)
+ *
  */
 public class Memory implements Serializable {
 
@@ -29,8 +31,8 @@ public class Memory implements Serializable {
     private UserPreferences userPreferences;
 
     /**
-     * Private constructor. Only called if there is no currently saved Memory.
-     * Default maximum attempts is 5.
+     * Private constructor. Used in the event that there is no memory saved at all (i.e.
+     * no mem.dat file).
      */
     private Memory()
     {
@@ -39,6 +41,12 @@ public class Memory implements Serializable {
         userPreferences = new UserPreferences();
     }
 
+    /**
+     * Private constructor. Used to create a new Memory that has the current
+     * user preferences in the saveMemory() method.
+     *
+     * @param userPreferences - The current user preferences.
+     */
     private Memory(UserPreferences userPreferences)
     {
         currentAttempts = 0;
@@ -50,8 +58,8 @@ public class Memory implements Serializable {
      * Attempts to load the currently saved memory. If the file 'mem.dat' is not
      * found, then a new Memory is returned.
      *
-     * @param context - the Context in which the method is being called
-     * @return the saved memory, or a new Memory object
+     * @param context - MainActivity
+     * @return Memory - the saved memory, or a new one.
      */
     public static Memory getInstance(Context context)
     {
@@ -80,6 +88,7 @@ public class Memory implements Serializable {
      * @param context - the Context in which this method is being called
      * @param vault - the current vault
      * @param crypter - the Crypter holding the user's password
+     * @param userPreferences - the current user preferences
      * @return boolean - true if successful
      */
     public static boolean saveMemory(Context context, Vault vault, Crypter crypter, UserPreferences userPreferences)
@@ -106,7 +115,7 @@ public class Memory implements Serializable {
     /**
      * This method is used to save the currently loaded memory on the log in screen.
      * This ensures that the login attempts are tracked.
-     * @param context
+     * @param context - MainActivity
      */
     public void saveMemory(Context context)
     {
@@ -131,7 +140,7 @@ public class Memory implements Serializable {
      * is successful, currentAttempts resets to 0.
      *
      * @param crypter - the Crypter object that has stored the user's password.
-     * @return Vault, or null
+     * @return Vault (or null)
      */
     public Vault getVault(Crypter crypter)
     {
@@ -156,43 +165,21 @@ public class Memory implements Serializable {
         }
     }
 
-    //Getters and setters
+    /*=========================
+    * Getter and Setter methods
+    * =========================*/
     public int getRemainingAttempts(){ return userPreferences.getMaxAttempts() - currentAttempts; }
     public UserPreferences getUserPreferences(){ return userPreferences; }
     public boolean isNew(){ return encryptedVault == null; }
     public byte[] getSeed(){ return ivSeed; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //testing
+    /*===============
+    * Testing methods
+    * ===============*/
     /**
      * Overloaded getInstance method for testing purposes.
      *
-     * @param fileName
+     * @param fileName - the name of the file which is being loaded
      * @return Memory
      */
     public static Memory getInstance(String fileName)
@@ -219,10 +206,10 @@ public class Memory implements Serializable {
 
     /**
      * Overloaded save method for testing
-     * @param fileName
-     * @param vault
-     * @param crypter
-     * @return boolean
+     * @param fileName - the name of the file being saved to
+     * @param vault - the current vault
+     * @param crypter - the current crypter
+     * @return boolean - true if successful, false otherwise
      */
     public boolean saveMemory(String fileName, Vault vault, Crypter crypter)
     {

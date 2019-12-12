@@ -11,6 +11,14 @@ import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
 
+
+/**
+ *
+ * Dialog Fragment for viewing general information about the Hagfish application.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class AboutHagfishDialog extends DialogFragment {
 
     @NonNull

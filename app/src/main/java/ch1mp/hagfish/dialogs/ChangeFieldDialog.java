@@ -16,11 +16,26 @@ import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
 
+/**
+ *
+ * Dialog Fragment for changing:
+ *  1. an account name
+ *  2. an account user name
+ *  3. an account password
+ *  4. the Hagfish password
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class ChangeFieldDialog extends DialogFragment {
 
-    DialogListener listener;
-    Field field;
+    private DialogListener listener;
+    private Field field;
 
+    /**
+     * Constructor must be informed of which field is being changed.
+     * @param field - The Field being changed.
+     */
     public ChangeFieldDialog(Field field)
     {
         this.field = field;
@@ -35,6 +50,10 @@ public class ChangeFieldDialog extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_change_field, null);
         final EditText editText = dialogView.findViewById(R.id.change_field);
 
+        /*
+        * Change the hint and input type, depending upon the field being changed.
+        * Default input type is 'text password'.
+        * */
         switch(field)
         {
             case ACCOUNT_NAME:
@@ -47,11 +66,9 @@ public class ChangeFieldDialog extends DialogFragment {
                 break;
             case ACCOUNT_PASSWORD:
                 editText.setHint(R.string.dialog_new_acc_pw);
-                //editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 break;
             case HAGFISH_PASSWORD:
                 editText.setHint(R.string.dialog_new_hf_pw);
-                //editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
 
         builder.setView(dialogView)
@@ -69,17 +86,14 @@ public class ChangeFieldDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Attach AccountViewActivity as a DialogListeenr
+     *
+     * @param context - AccountViewActivity
+     */
     @Override
     public void onAttach(Context context) {
-        try
-        {
-            listener = (DialogListener) context;
-        }
-        catch(ClassCastException e)
-        {
-            e.printStackTrace();
-        }
-
+        listener = (DialogListener) context;
         super.onAttach(context);
     }
 
@@ -88,5 +102,14 @@ public class ChangeFieldDialog extends DialogFragment {
         void updateField(String newValue, Field field);
     }
 
-    public enum Field{ USER_NAME, ACCOUNT_PASSWORD, HAGFISH_PASSWORD, ACCOUNT_NAME }
+    /**
+     * Enum for the field that is being changed.
+     */
+    public enum Field
+    {
+        USER_NAME,
+        ACCOUNT_PASSWORD,
+        HAGFISH_PASSWORD,
+        ACCOUNT_NAME
+    }
 }

@@ -15,11 +15,23 @@ import androidx.fragment.app.DialogFragment;
 
 import ch1mp.hagfish.R;
 
+/**
+ *
+ * A Dialog Fragment to prompt the user with a simple Yes/No warning.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class WarningDialog extends DialogFragment {
 
     private DialogListener listener;
     private Action action;
 
+    /**
+     * The constructor requires the Action that will be carried out upon the
+     * user pressing 'Continue'
+     * @param action -  The Action being carried out
+     */
     public WarningDialog(Action action)
     {
         this.action = action;
@@ -34,6 +46,10 @@ public class WarningDialog extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_warning, null);
         final TextView textWarning = dialogView.findViewById(R.id.dialog_warning);
 
+        /*
+        * The message included in the warning depends upon the action being
+        * carried out.
+        * */
         switch(action)
         {
             case GO_BACK:
@@ -61,24 +77,32 @@ public class WarningDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Attach the AccountViewActivity as a DialogListener
+     * @param context - AccountViewActivity
+     */
     @Override
     public void onAttach(Context context) {
+        listener = (DialogListener) context;
         super.onAttach(context);
-
-        try
-        {
-            listener = (DialogListener) context;
-        }
-        catch(ClassCastException e)
-        {
-            e.printStackTrace();
-        }
     }
 
+    /**
+     * The interface that passes a positive confirmation to the AccountViewActivity
+     */
     public interface DialogListener
     {
         void doAction(Action action);
     }
 
-    public enum Action { GO_BACK, DELETE_ACCOUNT, BURN_VAULT, UNDO_CHANGE_PASSWORD }
+    /**
+     * The Action that will be carried out once the user presses 'Continue'.
+     */
+    public enum Action
+    {
+        GO_BACK,
+        DELETE_ACCOUNT,
+        BURN_VAULT,
+        UNDO_CHANGE_PASSWORD
+    }
 }

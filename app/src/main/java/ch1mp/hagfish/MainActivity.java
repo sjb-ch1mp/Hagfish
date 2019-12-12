@@ -13,6 +13,16 @@ import ch1mp.hagfish.utils.Crypter;
 import ch1mp.hagfish.store.Memory;
 import ch1mp.hagfish.store.Vault;
 
+/**
+ * The main activity for Hagfish is the log in screen.
+ * The user can only enter a password.
+ *
+ * If there are no accounts saved - Hagfish will run first time set-up.
+ * If there ARE accounts saved - if the user exceeds the allowed number of
+ * incorrect password attempts, all accounts are deleted.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Memory memory;
@@ -118,12 +128,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Creates a new Vault and Crypter
+     * @param password - the password entered by the user.
+     */
     private void runFirstTimeSetUp(String password)
     {
         vault = new Vault();
         crypter = new Crypter(password);
     }
 
+    /**
+     * Save the decrypted vault, CrypterKey and user preferences to the Intent and
+     * launch the AccountViewActivity.
+     */
     private void openAccountViewer()
     {
         Intent intent = new Intent(MainActivity.this, AccountViewActivity.class);
@@ -135,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Clear the current memory object and delete the mem.dat file
+     */
     private void clearMemory()
     {
         memory = null;
@@ -146,6 +167,10 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Save the memory if it exists to ensure that the attempted login count is
+     * maintained.
+     */
     @Override
     protected void onPause() {
         if(memory != null) memory.saveMemory(this);

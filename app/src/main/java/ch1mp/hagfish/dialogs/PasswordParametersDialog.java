@@ -20,11 +20,23 @@ import androidx.fragment.app.DialogFragment;
 import ch1mp.hagfish.R;
 import ch1mp.hagfish.store.PasswordParameters;
 
+/**
+ *
+ * DialogListener for updating the PasswordParameters of an account.
+ *
+ * @author Samuel J. Brookes (sjb-ch1mp)
+ *
+ */
 public class PasswordParametersDialog extends DialogFragment {
 
     private DialogListener listener;
     private PasswordParameters pp;
 
+    /**
+     * Constructor requires the current PasswordParameters to build the
+     * dialog correctly.
+     * @param pp - The current PasswordParameters for the account
+     */
     public PasswordParametersDialog(PasswordParameters pp)
     {
         this.pp = pp;
@@ -45,6 +57,9 @@ public class PasswordParametersDialog extends DialogFragment {
         final LinearLayout lscContainer = dialogView.findViewById(R.id.lsc_container);
         final EditText etLimSpecChar = dialogView.findViewById(R.id.editText_lsc);
 
+        /*
+        * Set up the dialog to reflect the current settings.
+        * */
         pwLength.setProgress(pp.getLength());
         cbLowerCase.setChecked(pp.lowerCaseAllowed());
         cbUpperCase.setChecked(pp.upperCaseAllowed());
@@ -85,12 +100,20 @@ public class PasswordParametersDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Attach the AccountViewActivity as a DialogListener
+     * @param context - AccountViewActivity
+     */
     @Override
     public void onAttach(Context context) {
         listener = (DialogListener) context;
         super.onAttach(context);
     }
 
+    /**
+     * The interface by which the new values for the PasswordParameters are passed
+     * to AccountViewActivity
+     */
     public interface DialogListener
     {
         void updateParameters(int length, boolean lc, boolean uc, boolean num, boolean esc, String lsc);
