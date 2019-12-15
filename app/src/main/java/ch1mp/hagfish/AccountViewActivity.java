@@ -140,13 +140,6 @@ public class AccountViewActivity
     {
         textAccountName = findViewById(R.id.textAccountName);
         textUserName = findViewById(R.id.textUserName);
-        textUserName.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                copyToClipboard(false);
-                return true;
-            }
-        });
 
         textModified = findViewById(R.id.textModified);
 
@@ -156,13 +149,6 @@ public class AccountViewActivity
             public void onClick(View view) {
                 resetIdleTimer();
                 showPassword();
-            }
-        });
-        textPassword.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                copyToClipboard(true);
-                return true;
             }
         });
 
@@ -431,8 +417,6 @@ public class AccountViewActivity
     {
         showToast(R.string.warning_idle_out);
 
-        clearClipboard();
-
         idleTimer.cancel();
 
         if(!saved)
@@ -534,30 +518,6 @@ public class AccountViewActivity
     protected void onRestart() {
         saved = false;
         super.onRestart();
-    }
-
-    /**
-     * Copies either the user name or password to the clipboard
-     *
-     * @param pw - true if textPassword long pressed, false otherwise
-     */
-    private void copyToClipboard(boolean pw)
-    {
-        ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        cbm.setPrimaryClip(ClipData.newPlainText(getString(R.string.app_name), ((pw)?activeAccount.getPassword():activeAccount.getUserName())));
-        showToast(((pw)?"Password":"User name") + " copied to clipboard");
-    }
-
-    /**
-     * Clears the content from the clipboard.
-     */
-    private void clearClipboard()
-    {
-        ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        if(cbm.hasPrimaryClip() && cbm.getPrimaryClip().getDescription().getLabel().toString().equals(getString(R.string.app_name)));
-        {
-            cbm.setPrimaryClip(ClipData.newPlainText(null, null));
-        }
     }
 
     /*==================================================================
