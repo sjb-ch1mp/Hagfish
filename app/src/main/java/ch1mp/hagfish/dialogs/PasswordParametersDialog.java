@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +51,7 @@ public class PasswordParametersDialog extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_password_params, null);
 
         final SeekBar pwLength = dialogView.findViewById(R.id.seekBar_password_length);
+        final TextView pwLenStatus = dialogView.findViewById(R.id.params_seekbar_status);
         final CheckBox cbLowerCase = dialogView.findViewById(R.id.checkBox_lc);
         final CheckBox cbUpperCase = dialogView.findViewById(R.id.checkBox_uc);
         final CheckBox cbNumbers = dialogView.findViewById(R.id.checkBox_nums);
@@ -61,6 +63,24 @@ public class PasswordParametersDialog extends DialogFragment {
         * Set up the dialog to reflect the current settings.
         * */
         pwLength.setProgress(pp.getLength());
+        pwLenStatus.setText(String.valueOf(pwLength.getProgress() + 1));
+        pwLength.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                pwLenStatus.setText(String.valueOf(seekBar.getProgress() + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+        });
+
         cbLowerCase.setChecked(pp.lowerCaseAllowed());
         cbUpperCase.setChecked(pp.upperCaseAllowed());
         cbNumbers.setChecked(pp.numericAllowed());

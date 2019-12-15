@@ -24,17 +24,6 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.80"
-            android:fontFamily="@font/anonymous_pro"
-            android:gravity="right"
-            android:paddingTop="5dp"
-            android:text=" 1"
-            android:textSize="12sp" />
-
         <SeekBar
             android:id="@+id/seekBar_login_attempts"
             android:layout_width="110dp"
@@ -44,14 +33,13 @@
             android:paddingTop="5dp" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/text_status_login_attempts"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_weight="0.80"
             android:fontFamily="@font/anonymous_pro"
             android:gravity="left"
             android:paddingTop="5dp"
-            android:text="10"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -72,17 +60,6 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.80"
-            android:fontFamily="@font/anonymous_pro"
-            android:gravity="right"
-            android:paddingTop="5dp"
-            android:text=" 1"
-            android:textSize="12sp" />
-
         <SeekBar
             android:id="@+id/seekBar_password_timer"
             android:layout_width="110dp"
@@ -92,14 +69,13 @@
             android:paddingTop="5dp" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/text_status_pw_timer"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_weight="0.80"
             android:fontFamily="@font/anonymous_pro"
             android:gravity="left"
             android:paddingTop="5dp"
-            android:text=" 5"
             android:textSize="12sp" />
         <!-- 1 to 5 seconds -->
 
@@ -122,17 +98,6 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.80"
-            android:fontFamily="@font/anonymous_pro"
-            android:gravity="right"
-            android:paddingTop="5dp"
-            android:text=" 1"
-            android:textSize="12sp" />
-
         <SeekBar
             android:id="@+id/seekBar_idle_timer"
             android:layout_width="110dp"
@@ -142,14 +107,13 @@
             android:paddingTop="5dp" />
 
         <TextView
-            android:id="@+id/textView20"
+            android:id="@+id/text_status_idle_timer"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_weight="0.80"
             android:fontFamily="@font/anonymous_pro"
             android:gravity="left"
             android:paddingTop="5dp"
-            android:text=" 5"
             android:textSize="12sp" />
         <!-- 1 to 5 minutes -->
 

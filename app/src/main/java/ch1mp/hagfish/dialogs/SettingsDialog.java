@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,8 +47,62 @@ public class SettingsDialog extends DialogFragment {
 
         View dialogView = inflater.inflate(R.layout.dialog_settings, null);
         final SeekBar sbLogin = dialogView.findViewById(R.id.seekBar_login_attempts);
+        final TextView textStatusLogin = dialogView.findViewById(R.id.text_status_login_attempts);
+        sbLogin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                textStatusLogin.setText(String.valueOf(seekBar.getProgress() + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+        });
+
         final SeekBar sbIdle = dialogView.findViewById(R.id.seekBar_idle_timer);
+        final TextView textStatusIdle = dialogView.findViewById(R.id.text_status_idle_timer);
+        sbIdle.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                textStatusIdle.setText(String.valueOf(seekBar.getProgress() + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+        });
+
         final SeekBar sbPassword = dialogView.findViewById(R.id.seekBar_password_timer);
+        final TextView textStatusPassword = dialogView.findViewById(R.id.text_status_pw_timer);
+        sbPassword.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                textStatusPassword.setText(String.valueOf(seekBar.getProgress() + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+        });
+
 
         /*
         * Set up the dialog to reflect the current settings
@@ -55,6 +110,9 @@ public class SettingsDialog extends DialogFragment {
         sbLogin.setProgress(up.getMaxAttempts() - 1);
         sbIdle.setProgress((up.getMaxIdle()/60000) - 1);
         sbPassword.setProgress((up.getMaxPasswordShowTime()/1000) - 1);
+        textStatusLogin.setText(String.valueOf(sbLogin.getProgress() + 1));
+        textStatusIdle.setText(String.valueOf(sbIdle.getProgress() + 1));
+        textStatusPassword.setText(String.valueOf(sbPassword.getProgress() + 1));
 
         builder.setView(dialogView)
                 .setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
