@@ -431,6 +431,8 @@ public class AccountViewActivity
     {
         showToast(R.string.warning_idle_out);
 
+        clearClipboard();
+
         idleTimer.cancel();
 
         if(!saved)
@@ -542,9 +544,20 @@ public class AccountViewActivity
     private void copyToClipboard(boolean pw)
     {
         ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        cbm.setPrimaryClip(ClipData.newPlainText(((pw)?"HAGFISH_Password":"HAGFISH_UserName"),
-                ((pw)?activeAccount.getPassword():activeAccount.getUserName())));
+        cbm.setPrimaryClip(ClipData.newPlainText(getString(R.string.app_name), ((pw)?activeAccount.getPassword():activeAccount.getUserName())));
         showToast(((pw)?"Password":"User name") + " copied to clipboard");
+    }
+
+    /**
+     * Clears the content from the clipboard.
+     */
+    private void clearClipboard()
+    {
+        ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if(cbm.hasPrimaryClip() && cbm.getPrimaryClip().getDescription().getLabel().toString().equals(getString(R.string.app_name)));
+        {
+            cbm.setPrimaryClip(ClipData.newPlainText(null, null));
+        }
     }
 
     /*==================================================================
