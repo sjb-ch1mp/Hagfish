@@ -1,5 +1,7 @@
 package ch1mp.hagfish;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -138,6 +140,14 @@ public class AccountViewActivity
     {
         textAccountName = findViewById(R.id.textAccountName);
         textUserName = findViewById(R.id.textUserName);
+        textUserName.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                copyToClipboard(false);
+                return true;
+            }
+        });
+
         textModified = findViewById(R.id.textModified);
 
         textPassword = findViewById(R.id.textPassword);
@@ -146,6 +156,13 @@ public class AccountViewActivity
             public void onClick(View view) {
                 resetIdleTimer();
                 showPassword();
+            }
+        });
+        textPassword.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                copyToClipboard(true);
+                return true;
             }
         });
 
@@ -515,6 +532,19 @@ public class AccountViewActivity
     protected void onRestart() {
         saved = false;
         super.onRestart();
+    }
+
+    /**
+     * Copies either the user name or password to the clipboard
+     *
+     * @param pw - true if textPassword long pressed, false otherwise
+     */
+    private void copyToClipboard(boolean pw)
+    {
+        ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        cbm.setPrimaryClip(ClipData.newPlainText(((pw)?"HAGFISH_Password":"HAGFISH_UserName"),
+                ((pw)?activeAccount.getPassword():activeAccount.getUserName())));
+        showToast(((pw)?"Password":"User name") + " copied to clipboard");
     }
 
     /*==================================================================
