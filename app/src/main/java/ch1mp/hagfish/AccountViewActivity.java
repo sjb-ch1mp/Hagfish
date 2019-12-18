@@ -94,6 +94,7 @@ public class AccountViewActivity
     ListView accountList;
     ArrayAdapter<Account> adapter;
     CountDownTimer idleTimer;
+    CountDownTimer pwTimer;
     boolean saved;
 
     @Override
@@ -351,8 +352,9 @@ public class AccountViewActivity
      */
     private void showPassword()
     {
+        cancelShowPWTimer();
         textPassword.setText(activeAccount.getPassword());
-        CountDownTimer timer = new CountDownTimer(userPreferences.getMaxPasswordShowTime(), 100) {
+        pwTimer = new CountDownTimer(userPreferences.getMaxPasswordShowTime(), 100) {
             @Override
             public void onTick(long l) {
                 //do nothing
@@ -363,7 +365,7 @@ public class AccountViewActivity
                 textPassword.setText(hidePassword());
             }
         };
-        timer.start();
+        pwTimer.start();
     }
 
     /**
@@ -456,6 +458,14 @@ public class AccountViewActivity
     public void setActiveAccount(Account account)
     {
         activeAccount = account;
+    }
+
+    /**
+     * Public utility method that allows the AccountAdapter to cancel the current
+     * pwTimer.
+     */
+    public void cancelShowPWTimer(){
+        if(pwTimer != null) pwTimer.cancel();
     }
 
     /**

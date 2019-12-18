@@ -47,8 +47,10 @@ public class AccountAdapter extends ArrayAdapter<Account> {
             @Override
             public void onClick(View view) {
                 ((AccountViewActivity) context).resetIdleTimer();
+                ((AccountViewActivity) context).cancelShowPWTimer();
                 ((AccountViewActivity) context).setActiveAccount(account);
                 ((AccountViewActivity) context).showAccountDetails();
+
             }
         });
 
