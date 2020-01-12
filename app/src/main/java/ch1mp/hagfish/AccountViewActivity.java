@@ -2,6 +2,7 @@ package ch1mp.hagfish;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -96,6 +98,8 @@ public class AccountViewActivity
     CountDownTimer idleTimer;
     CountDownTimer pwTimer;
     boolean saved;
+    boolean visible;
+    ClipboardManager clipboardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +113,9 @@ public class AccountViewActivity
         setUpAccountMenu();
         toggleAccountButton(vault.size());
         saved = false;
+        visible = true;
+
+        clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     /**
@@ -140,9 +147,19 @@ public class AccountViewActivity
     private void setUpLabels()
     {
         textAccountName = findViewById(R.id.textAccountName);
-        textUserName = findViewById(R.id.textUserName);
-
         textModified = findViewById(R.id.textModified);
+
+        textUserName = findViewById(R.id.textUserName);
+        textUserName.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                resetIdleTimer();
+                ClipData clip = ClipData.newPlainText("HAGFISH.USER_NAME", activeAccount.getUserName());
+                clipboardManager.setPrimaryClip(clip);
+                showToast("User name copied to clipboard");
+                return true;
+            }
+        });
 
         textPassword = findViewById(R.id.textPassword);
         textPassword.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +167,16 @@ public class AccountViewActivity
             public void onClick(View view) {
                 resetIdleTimer();
                 showPassword();
+            }
+        });
+        textPassword.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                resetIdleTimer();
+                ClipData clip = ClipData.newPlainText("HAGFISH.PASSWORD", activeAccount.getPassword());
+                clipboardManager.setPrimaryClip(clip);
+                showToast("Password copied to clipboard");
+                return true;
             }
         });
 
@@ -421,12 +448,20 @@ public class AccountViewActivity
 
         idleTimer.cancel();
 
+        ClipData clip = ClipData.newPlainText("HAGFISH.ClearClip", " ");
+        clipboardManager.setPrimaryClip(clip);
+
         if(!saved)
             saved = Memory.saveMemory(this, vault, crypter.scramble(), userPreferences);
 
-        Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        if(visible){
+            Intent intent = new Intent(AccountViewActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            ActivityCompat.finishAffinity(this);
+        }
+
     }
 
     /**
@@ -517,6 +552,7 @@ public class AccountViewActivity
     protected void onPause() {
         if(!saved)
             saved = Memory.saveMemory(this, vault, crypter.scramble(), userPreferences);
+        visible = false;
         super.onPause();
     }
 
@@ -527,7 +563,17 @@ public class AccountViewActivity
     @Override
     protected void onRestart() {
         saved = false;
+        visible = true;
         super.onRestart();
+    }
+
+    /**
+     * Keeps track of whether the application is visible or not.
+     */
+    @Override
+    protected void onResume() {
+        visible = true;
+        super.onResume();
     }
 
     /*==================================================================

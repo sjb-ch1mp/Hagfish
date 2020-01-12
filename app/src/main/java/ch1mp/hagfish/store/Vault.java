@@ -92,7 +92,7 @@ public class Vault extends ArrayList<Account> implements Serializable {
     {
         for(int i=0; i<this.size(); i++){
             for(int j=i; j<this.size(); j++){
-                if(this.get(i).getAccountName().compareTo(this.get(j).getAccountName()) > 0){
+                if(this.get(i).getAccountName().toUpperCase().compareTo(this.get(j).getAccountName().toUpperCase()) > 0){
                     Account hold = this.get(i);
                     this.set(i, this.get(j));
                     this.set(j, hold);
