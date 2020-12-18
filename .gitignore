@@ -4,9 +4,11 @@
 *.pro
 gradlew*
 /.gradle/
+/gradle/
 /.idea/
 /app/build/
 /libs/
-/androidTest/
-/test/
+/app/src/androidTest/
+/app/src/test/
 /app.iml/
+/libs/
